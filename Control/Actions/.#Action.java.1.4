@@ -1,0 +1,171 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package Control.Actions;
+
+import Model.Datatypes.Complete;
+import Model.Datatypes.Priority;
+import Model.Datatypes.TaskObject;
+import Model.SixteenBitModel;
+import View.AddWindow;
+import View.BitButton;
+import View.DayCardWindow;
+import View.EditWindow;
+import java.awt.event.ActionEvent;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import javax.swing.AbstractAction;
+import javax.swing.JFrame;
+
+/**
+ *
+ * @author Robert
+ */
+public class Action extends AbstractAction {
+    private String actionType;
+    private DayCardWindow dcw;
+    private AddWindow aw;
+    private EditWindow ew;
+    private DateFormat tdf = new SimpleDateFormat("yyyy-MM-dd");
+    private DateFormat ttf = new SimpleDateFormat("HH:mm");
+    private String tName;
+    private String tInfo;
+    private String sDates;
+    private String sTimes;        
+    private Date tDate;
+    private Date tTime;
+    private Priority tPrio;
+    private Complete tComp;
+    private String tCat;
+    private TaskObject to;
+    private SixteenBitModel model = SixteenBitModel.getInstance();
+    
+    public Action(DayCardWindow f, String at) {
+        actionType = at;
+        dcw = f;
+    }
+    
+    public Action(DayCardWindow dc, AddWindow f, String at) {
+        actionType = at;
+        dcw = dc;
+        aw = f;
+    }
+    
+    public Action(AddWindow f, String at) {
+        actionType = at;
+        aw = f;
+    }
+    
+    public Action(DayCardWindow dc, EditWindow f, String at) {
+        actionType = at;
+        dcw = dc;
+        ew = f;
+    }
+    
+    public Action(EditWindow f, String at) {
+        actionType = at;
+        ew = f;
+    }
+    
+    public Action(BitButton bit, String at) {
+        actionType = at;
+    }
+    
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (actionType.equals("add")) {
+            AddWindow frame = new AddWindow(dcw);
+            frame.setTitle("Add task");
+            frame.pack();
+            frame.setVisible(true);
+        }
+        
+        else if (actionType.equals("edit")) {
+            EditWindow frame = new EditWindow(dcw);
+            frame.setTitle("Add task");
+            frame.pack();
+            frame.setVisible(true);
+        }
+        
+        else if (actionType.equals("remove")) {
+            
+            dcw.updateGUI();
+        }
+        
+        else if (actionType.equals("okaw")) {
+            tName = aw.getTaskName();   
+            tInfo = aw.getTaskInfo();
+            sDates = "2012-12-12";
+            sTimes = "12:12";
+            tComp = new Complete("no");
+            tPrio = new Priority("normal");
+            tCat = "Standard";
+            tDate = null;
+            tTime = null;
+            try { 
+                tDate = tdf.parse(sDates);
+            } 
+            catch(Exception es) {
+            }
+            try { 
+                tTime = ttf.parse(sTimes);
+            } 
+            catch(Exception es) {
+            }
+            to = new TaskObject(tName, tInfo, tDate, tTime, 
+            tComp, tPrio, tCat);
+            model.addTask(to);
+            aw.dispose();
+            dcw.updateGUI();
+            System.out.println(model.getThisMonthTasks());
+        }
+        
+        else if (actionType.equals("okew")) {
+            tName = ew.getTaskName();   
+            tInfo = ew.getTaskInfo();
+            sDates = "2012-12-12";
+            sTimes = "12:12";
+            tComp = new Complete("no");
+            tPrio = new Priority("normal");
+            tCat = "Standard";
+            tDate = null;
+            tTime = null;
+            try { 
+                tDate = tdf.parse(sDates);
+            } 
+            catch(Exception es) {
+            }
+            try { 
+                tTime = ttf.parse(sTimes);
+            } 
+            catch(Exception es) {
+            }
+            to = new TaskObject(tName, tInfo, tDate, tTime, 
+            tComp, tPrio, tCat);
+            model.addTask(to);
+            ew.dispose();
+        }
+        
+        else if (actionType.equals("cancel")) {
+            dcw.dispose();
+        }
+        
+        else if (actionType.equals("cancelaw")) {
+            aw.dispose();
+        }
+        
+        else if (actionType.equals("cancelew")) {
+            ew.dispose();
+        }
+        else if(actionType.equals("next")) {
+            model.nextMonth();
+        }
+        else if(actionType.equals("previous")) {
+            //model.prevMonth();
+        }
+    }
+    
+}
+

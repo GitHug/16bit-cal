@@ -1,0 +1,624 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package Control;
+
+import Control.Actions.Action;
+import Control.Interface.Drawable;
+import Model.CalendarMethods;
+import Model.Datatypes.*;
+import Model.SixteenBitModel;
+import View.*;
+import java.awt.Color;
+import java.awt.Point;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.prefs.Preferences;
+
+/**
+ * Class that initiates a lot of program parameters at startup; 
+ * sets the position and size of the components that will be drawn on 
+ * the canvas and fills lists with objects needed to process tasks and
+ * other things.
+ *
+ * @author fredrikmakila
+ */
+public class ComponentLoader extends CalendarMethods {
+
+    private ArrayList<Drawable> list = new ArrayList<Drawable>();
+    private int dcHeight = 60;
+    private int dcWidth = 65;
+    private int wdHeight = 40;
+    private int wHeight = 60;
+    private int mHeight = 50;
+    private int btnWidth = 120;
+    private int btnHeight = 60;
+    private int addwHeight = 600;
+    private int addwWidth = 240;
+    private int boxWidth = 240;
+    private int boxHeight = 90;
+    private int taskinfoHeight = 300;
+    private int dcTotalWidth;
+    private int dcTotalHeight;
+    private int wdWidth = 65;
+    private int wdTotalWidth = 0;
+    private int wWidth = 50;
+    private int wTotalHeight = 0;
+    private int mWidth;
+    private int x = 0;
+    private int y = 0;
+    private int xPos;
+    private int yPos;
+    private int month;
+    private int year;
+    private int day;
+    private AtomicInteger id = new AtomicInteger();
+    private int totalCalendarWidth;
+    private int totalCalendarHeight;
+    private SixteenBitModel model;
+    private Preferences prefs;
+    private String[] weekDay = {
+        "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
+    };
+    private DayCardIdentifiers dcId;
+    private DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+
+
+    /**
+     * Constructor that loads all the components.
+     */
+    public ComponentLoader() {
+        prefs = Preferences.userNodeForPackage(getClass());
+        loadResource("Model.Database.imageResource");
+        month = getMonth();
+        year = getYear();
+        day = getDay();
+        model = SixteenBitModel.getInstance();
+        model.setYear(year);
+        dcId = new DayCardIdentifiers();
+        set();
+    }
+
+    /**
+     * Method that loads a property file. The String, url, has to be a valid
+     * property file name including it's path. A general example is
+     * "package.subpackage.propertyfile"
+     *
+     * @param url The name of the property file, including its path
+     */
+    private void loadResource(String url) {
+        prefs.put("resource", url);
+    }
+
+    /**
+     * Method that creates all the daycards for a month view
+     */
+    private void createMonthView() {
+        //Creates the weekdays
+        for (int i = 0; i < weekDay.length; i++) {
+            String wd = weekDay[i];
+            xPos = i * wdWidth + wWidth;
+            yPos = 0 + mHeight;
+            DayCard wdc = new DayCard(xPos, yPos, wdWidth, wdHeight, new WeekDay(wd).get(), id.incrementAndGet());
+            wdc.setBackgroundColor(Color.GREEN);
+            wdc.setBorderType(new BorderImage("chain"));
+            wdc.setFontSize(8);
+            wdc.setSelectable(false);
+            model.updateObservableRegistration().addObserver(wdc);
+            list.add(wdc);
+            dcId.addWeekDayCard(id.intValue());
+            wdTotalWidth += wdWidth;
+            //adds to paintList
+            model.addPaintList(wdc);
+        }
+
+        //Creates the month
+        xPos = 0;
+        yPos = 0;
+        mWidth = wWidth + wdTotalWidth;
+        DayCard mc = new DayCard(xPos, yPos, mWidth, mHeight, new Month(month).get(), id.incrementAndGet());
+        mc.setBackgroundColor(Color.red);
+        mc.setBorderType(new BorderImage("tiny"));
+        mc.setSelectable(false);
+        model.updateObservableRegistration().addObserver(mc);
+        model.setMonth(month);
+        //model.setMonthCardId(id.get());
+        list.add(mc);
+        dcId.setMonthCard(id.intValue());
+        //adds to paintList
+        model.addPaintList(mc);
+
+        //Creates the week numbers
+        int week = 0;
+        ArrayList array = getWeekNumber(year, month);
+        //model.setFirstWeekCardId(id.get() + 1);
+        for (int i = 0; i < array.size(); i++) {
+            week = (Integer) array.get(i);
+            xPos = 0;
+            yPos = i * wHeight + wdHeight + mHeight;
+            DayCard wc = new DayCard(xPos, yPos, wWidth, wHeight, "" + week, id.incrementAndGet());
+            wc.setBackgroundColor(Color.YELLOW);
+            wc.setBorderType(new BorderImage("chain"));
+            wc.setSelectable(false);
+            model.updateObservableRegistration().addObserver(wc);
+            model.selectedObservableRegistration().addObserver(wc);
+            list.add(wc);
+            dcId.addWeekCard(id.intValue());
+            wTotalHeight += wHeight;
+            //adds to paintList
+            model.addPaintList(wc);
+        }
+        //Adds extra week cards if the number of weeks of a month is less than 6. 
+        //The reason for this is to being able to edit and make daycards transparent
+        //without needing to create new daycards
+        if (array.size() < 6) {
+            int next = 1;
+            for (int i = array.size(); i < 6; i++) {
+                week++;
+                yPos = i * wHeight + wdHeight + mHeight;
+                DayCard wc = new DayCard(xPos, yPos, wWidth, wHeight, ""+week, id.incrementAndGet());
+                wc.setBackgroundColor(Color.YELLOW);
+                wc.setBorderType(new BorderImage("chain"));
+                wc.setDefaultBorder("chain");
+                wc.setSelectable(false);
+                model.updateObservableRegistration().addObserver(wc);
+                model.selectedObservableRegistration().addObserver(wc);
+                list.add(wc);
+                dcId.addWeekCard(id.intValue());
+                wTotalHeight += wHeight;
+                //adds to paintList
+                model.addPaintList(wc);
+            }
+        }
+        //model.setLastWeekCardId(id.get());
+
+        //Creates the days in the previous month
+        //model.setFirstDayCardId(id.get() + 1);
+        int xStart = getWeekDay(year, month);
+        int numDays;
+        int prevMonth;
+        int prevYear;
+        if (month - 1 < 0) {
+            prevMonth = 11;
+            prevYear = year - 1;
+        } else {
+            prevMonth = month - 1;
+            prevYear = year;
+        }
+        numDays = getNumberOfDays(prevYear, prevMonth);
+        numDays = numDays - xStart;
+        for (int i = 0; i < xStart; i++) {
+            int d = numDays + i + 1;
+            xPos = i * dcWidth + wWidth;
+            yPos = wdHeight + mHeight;
+            DayCard dc = new DayCard(xPos, yPos, dcWidth, dcHeight, "" + d, id.incrementAndGet());
+            dc.setBackgroundColor(new Color(0, 200, 255, 100));
+            model.selectedObservableRegistration().addObserver(dc);
+            model.updateObservableRegistration().addObserver(dc);
+            model.animationObservableRegistration().addObserver(dc);
+            dc.setSelectable(false);
+            Action dayCardWindow = new Action(dc, "daycardw");
+            dc.addActionListener(dayCardWindow);
+            list.add(dc);
+            dcId.addDayCard(new CardStuffList(id.intValue()));
+            //adds to paintList
+            model.addPaintList(dc);
+        }
+        //Create a date to be saved in the model
+        Date date = null;
+        //Creates a convenient string for the date
+        String dateString = year+"-"+addChar(month+1)+"-";
+        //Creates the days in the current month
+        for (int i = xStart; i < getNumberOfDays(year, month) + xStart; i++) {
+            int d = i - xStart + 1;
+            String tempString = dateString;
+            xPos = (i % 7) * dcWidth + wWidth;
+            yPos = (i / 7) * dcHeight + wdHeight + mHeight;
+            DayCard dc = new DayCard(xPos, yPos, dcWidth, dcHeight, "" + d, id.incrementAndGet());
+            if (d == getDay()) {
+                dc.setBackgroundColor(Color.BLUE);
+            }
+            model.selectedObservableRegistration().addObserver(dc);
+            model.updateObservableRegistration().addObserver(dc);
+            model.animationObservableRegistration().addObserver(dc);
+            Action dayCardWindow = new Action(dc, "daycardw");
+            dc.addActionListener(dayCardWindow);
+            list.add(dc);
+            tempString = tempString + addChar(d);
+
+            try {
+                date = df.parse(tempString);
+            } catch (ParseException ex) {
+                Logger.getLogger(ComponentLoader.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            dcId.addDayCard(new CardStuffList(id.intValue(), date));
+            //adds to paintList
+            model.addPaintList(dc);
+        }
+        //Next month
+        int nextMonth;
+        int nextYear;
+        int counter = 0;
+        if (month + 1 > 12) {
+            nextMonth = 0;
+            nextYear = year + 1;
+        } else {
+            nextMonth = month - 1;
+            nextYear = year;
+        }
+        for (int i = (xPos - wWidth) / dcWidth + 1; i < 7; i++) {
+            int d = i;
+            counter++;
+            xPos = i * dcWidth + wWidth;
+            DayCard dc = new DayCard(xPos, yPos, dcWidth, dcHeight, "" + counter, id.incrementAndGet());
+            dc.setBackgroundColor(new Color(255, 200, 0, 100));
+            model.selectedObservableRegistration().addObserver(dc);
+            model.updateObservableRegistration().addObserver(dc);
+            model.animationObservableRegistration().addObserver(dc);
+            dc.setSelectable(false);
+            Action dayCardWindow = new Action(dc, "daycardw");
+            dc.addActionListener(dayCardWindow);
+            list.add(dc);
+            dcId.addDayCard(new CardStuffList(id.intValue()));
+            //adds to paintList
+            model.addPaintList(dc);
+        }
+        //Creates extra daycards if necessary. The reason is to not have to create more
+        //daycards later.
+        if (id.get() < 55) {
+            yPos = yPos + dcHeight;
+            for (int i = (xPos - wWidth) / dcWidth + 1 - 7; i < 7; i++) {
+                counter++;
+                xPos = i * dcWidth + wWidth;
+                DayCard dc = new DayCard(xPos, yPos, dcWidth, dcHeight, ""+counter, id.incrementAndGet());
+                dc.setBackgroundColor(new Color(255, 200, 0, 100));
+                //dc.setBorderType(null);
+                dc.setSelectable(false);
+                model.selectedObservableRegistration().addObserver(dc);
+                model.updateObservableRegistration().addObserver(dc);
+                model.animationObservableRegistration().addObserver(dc);
+                dc.setSelectable(false);
+                Action dayCardWindow = new Action(dc, "daycardw");
+                dc.addActionListener(dayCardWindow);
+                list.add(dc);
+                dcId.addDayCard(new CardStuffList(id.intValue()));
+                //adds to paintList
+                model.addPaintList(dc);
+            }
+        }
+        //model.setLastDayCardId(id.get());
+
+        dcTotalWidth = dcWidth * 7;
+        dcTotalHeight = yPos * dcHeight;
+
+        totalCalendarWidth = wWidth + dcTotalWidth;
+        totalCalendarHeight = mHeight + dcTotalHeight;
+
+    }
+
+    /**
+     * Creates all the components for the menu panel.
+     */
+    private void createMenu() {
+        //Menu starts here
+        //Creates the background for the menu
+        xPos = totalCalendarWidth;
+        yPos = 0;
+        BackgroundComponent rgtwindow = new BackgroundComponent(xPos, yPos, addwWidth, addwHeight);
+        rgtwindow.setBorderType(new BorderImage("blob"));
+        list.add(rgtwindow);
+        //adds to paintList
+        model.addPaintList(rgtwindow);
+
+        //Adds another backgound
+        BackgroundComponent box = new BackgroundComponent(xPos, yPos, boxWidth, boxHeight);
+        box.setBackgroundColor(Color.cyan);
+        box.setBorderType(new BorderImage("blob"));
+        list.add(box);
+        //adds to paintList
+        model.addPaintList(box);
+        
+        /*
+        //Adds a button with name "Add task"
+        yPos = mHeight + wdHeight;
+        BitButton add = new BitButton(xPos, yPos, btnWidth, btnHeight, "Add task", id.incrementAndGet());
+        add.setBackgroundColor(Color.ORANGE);
+        add.setBorderType(new BorderImage("blob"));
+        list.add(add);
+        //adds to paintList
+        model.addPaintList(add);
+
+        //Adds a button with name "Edit task"
+        yPos = mHeight + wdHeight + btnHeight;
+        BitButton edit = new BitButton(xPos, yPos, btnWidth, btnHeight, "Edit task", id.incrementAndGet());
+        edit.setBackgroundColor(Color.ORANGE);
+        edit.setBorderType(new BorderImage("blob"));
+        list.add(edit);
+        //adds to paintList
+        model.addPaintList(edit);
+        
+        */
+        /*
+        //Adds a button with name "Low prio" 
+        yPos = mHeight + wdHeight;
+        BitButton lowP = new BitButton(xPos, yPos, btnWidth, btnHeight, "Low Prio", id.incrementAndGet());
+        lowP.setBackgroundColor(Color.ORANGE);
+        lowP.setBorderType(new BorderImage("blob"));
+        model.selectedObservableRegistration().addObserver(lowP);
+        model.deSelectedObservableRegistration().addObserver(lowP);
+        lowP.addActionListener(new Action("lowP"));
+        list.add(lowP);
+        //adds to paintList
+        model.addPaintList(lowP);
+        
+        //Adds a button with name "Normal Prio" 
+        yPos = mHeight + wdHeight + btnHeight;
+        BitButton normalP = new BitButton(xPos, yPos, btnWidth, btnHeight, "Normal Prio", id.incrementAndGet());
+        normalP.setBackgroundColor(Color.ORANGE);
+        normalP.setBorderType(new BorderImage("blob"));
+        model.selectedObservableRegistration().addObserver(normalP);
+        model.deSelectedObservableRegistration().addObserver(normalP);
+        normalP.addActionListener(new Action("normalP"));
+        list.add(normalP);
+        //adds to paintList
+        model.addPaintList(normalP);
+        
+        //Adds a button with name "High Prio" 
+        yPos = mHeight + wdHeight + btnHeight+btnHeight;
+        BitButton highP = new BitButton(xPos, yPos, btnWidth, btnHeight, "High Prio", id.incrementAndGet());
+        highP.setBackgroundColor(Color.ORANGE);
+        highP.setBorderType(new BorderImage("blob"));
+        model.selectedObservableRegistration().addObserver(highP);
+        model.deSelectedObservableRegistration().addObserver(highP);
+        highP.addActionListener(new Action("highP"));
+        list.add(highP);
+        //adds to paintList
+        model.addPaintList(highP);*/
+        
+        //Adds a Checkbox with name "Low Prio"
+        xPos = xPos + btnWidth - 50;
+        yPos = mHeight + wdHeight + 12;
+        Checkbox lowPCheck = new Checkbox(xPos, yPos, "Low Prio", id.incrementAndGet());
+        lowPCheck.setBackgroundColor(Color.GREEN);
+        model.selectedObservableRegistration().addObserver(lowPCheck);
+        model.deSelectedObservableRegistration().addObserver(lowPCheck);
+        model.addToCheckboxList(lowPCheck);
+        lowPCheck.addActionListener(new Action("lowP"));
+        list.add(lowPCheck);
+        //adds to paintList
+        model.addPaintList(lowPCheck);
+        
+        //Adds a Checkbox with name "Med Prio"
+        //xPos = xPos + btnWidth;
+        yPos = yPos + btnHeight - 20;
+        Checkbox medPCheck = new Checkbox(xPos, yPos, "Med Prio", id.incrementAndGet());
+        medPCheck.setBackgroundColor(Color.YELLOW);
+        model.selectedObservableRegistration().addObserver(medPCheck);
+        model.deSelectedObservableRegistration().addObserver(medPCheck);
+        model.addToCheckboxList(medPCheck);
+        medPCheck.addActionListener(new Action("normalP"));
+        list.add(medPCheck);
+        //adds to paintList
+        model.addPaintList(medPCheck);
+        
+        //Adds a Checkbox with name "High Prio"
+        //xPos = xPos + btnWidth;
+        yPos = yPos + btnHeight - 20;
+        Checkbox highPCheck = new Checkbox(xPos, yPos, "High Prio", id.incrementAndGet());
+        highPCheck.setBackgroundColor(Color.RED);
+        model.selectedObservableRegistration().addObserver(highPCheck);
+        model.deSelectedObservableRegistration().addObserver(highPCheck);
+        model.addToCheckboxList(highPCheck);
+        highPCheck.addActionListener(new Action("highP"));
+        list.add(highPCheck);
+        //adds to paintList
+        model.addPaintList(highPCheck); 
+        
+        //Adds a button with name "Redo"
+        xPos = xPos + 50;
+        yPos = mHeight + wdHeight;
+        BitButton remove = new BitButton(xPos, yPos, btnWidth, btnHeight, "Redo", id.incrementAndGet());
+        remove.setBackgroundColor(Color.BLUE);
+        remove.setBorderType(new BorderImage("blob"));
+        model.selectedObservableRegistration().addObserver(remove);
+        model.deSelectedObservableRegistration().addObserver(remove);
+        remove.addActionListener(new Action("redo"));
+        list.add(remove);
+        //adds to paintList
+        model.addPaintList(remove);
+
+        //Adds a button with name !Undo!
+        yPos = mHeight + wdHeight + btnHeight;
+        BitButton comp = new BitButton(xPos, yPos, btnWidth, btnHeight, "Undo", id.incrementAndGet());
+        comp.setBackgroundColor(Color.BLUE);
+        comp.setBorderType(new BorderImage("blob"));
+        model.selectedObservableRegistration().addObserver(comp);
+        model.deSelectedObservableRegistration().addObserver(comp);
+        comp.addActionListener(new Action("undo"));
+        list.add(comp);
+        //adds to paintList
+        model.addPaintList(comp);
+        
+/*
+        //Adds another backgound where tasks and events can be displayed
+        xPos = totalCalendarWidth;
+        yPos = mHeight + wdHeight + 2 * btnHeight;
+        BackgroundComponent taskinfo = new BackgroundComponent(xPos, yPos, btnWidth * 2, wdHeight);
+        taskinfo.setBackgroundColor(Color.cyan);
+        taskinfo.setBorderType(new BorderImage("blob"));
+        list.add(taskinfo);
+        //adds to paintList
+        model.addPaintList(taskinfo);
+
+        //Adds an infobox
+        yPos = mHeight + 2 * wdHeight + 2 * btnHeight;
+        BackgroundComponent infobox = new BackgroundComponent(xPos, yPos, boxWidth, taskinfoHeight);
+        infobox.setBackgroundColor(Color.WHITE);
+        infobox.setBorderType(new BorderImage("blob"));
+        list.add(infobox);
+        //adds to paintList
+        model.addPaintList(infobox);
+*/
+        //Adds a button in the form of an arrow
+        BitButton backArrow = new BitButton(0, 0, "back_arrow", id.incrementAndGet());
+        model.selectedObservableRegistration().addObserver(backArrow);
+        model.deSelectedObservableRegistration().addObserver(backArrow);
+        Action prevAction = new Action(backArrow, "previous");
+        backArrow.addActionListener(prevAction);
+        list.add(backArrow);
+        //adds to paintList
+        model.addPaintList(backArrow);
+
+        //Adds another button in the form of an arrow
+        BitButton forwardArrow = new BitButton(mWidth - backArrow.getSize().width, 0, "forward_arrow", id.incrementAndGet());
+        model.selectedObservableRegistration().addObserver(forwardArrow);
+        model.deSelectedObservableRegistration().addObserver(forwardArrow);
+        Action nextAction = new Action(forwardArrow, "next");
+        forwardArrow.addActionListener(nextAction);
+        list.add(forwardArrow);
+        //adds to paintList
+        model.addPaintList(forwardArrow);
+        
+        
+    }
+
+    /**
+     * Method that creates some background graphics.
+     */
+    private void createGraphics() {
+        //Draws some silly graphics
+        //Creates a board walk
+        xPos = 0;
+        Picture p = new Picture(0, 0, "walk");
+        yPos = 559;
+        p.setLocation(new Point(xPos, yPos));
+        list.add(p);
+        //adds to paintList
+        model.addPaintList(p);
+
+        //And another one
+        xPos = xPos + p.getWidth();
+        Picture p1 = new Picture(xPos, yPos, "walk");
+        list.add(p1);
+        //adds to paintList
+        model.addPaintList(p1);
+
+        //And another one
+        xPos = xPos + p.getWidth();
+        Picture p2 = new Picture(xPos, yPos, "walk");
+        list.add(p2);
+        //adds to paintList
+        model.addPaintList(p2);
+
+        //And another one
+        xPos = xPos + p.getWidth();
+        Picture p3 = new Picture(xPos, yPos, "walk");
+        list.add(p3);
+        //adds to paintList
+        model.addPaintList(p3);
+
+        //And another one
+        xPos = xPos + p.getWidth();
+        Picture p4 = new Picture(xPos, yPos, "walk");
+        list.add(p4);
+        //adds to paintList
+        model.addPaintList(p4);
+
+        //And a house
+        xPos = xPos + p.getWidth();
+        Picture p5 = new Picture(xPos, yPos, "house");
+        p5.setLocation(new Point(xPos, yPos + p.getHeight() - p5.getHeight()));
+        list.add(p5);
+        //adds to paintList
+        model.addPaintList(p5);
+
+        //And a taller house
+        xPos = xPos + p5.getWidth();
+        Picture p6 = new Picture(xPos, yPos, "tall_house");
+        p6.setLocation(new Point(xPos, yPos + p.getHeight() - p6.getHeight()));
+        list.add(p6);
+        //adds to paintList
+        model.addPaintList(p6);
+
+        //And a moon
+        xPos = xPos + p6.getWidth() + 10;
+        yPos = yPos + p.getHeight() - p6.getHeight();
+        Picture p7 = new Picture(xPos, yPos, "moon");
+        list.add(p7);
+        //adds to paintList
+        model.addPaintList(p7);
+
+        //And another board walk
+        xPos = xPos + p6.getWidth() - p6.getWidth() - 10;
+        yPos = 620 - p.getHeight();
+        Picture p8 = new Picture(xPos, yPos, "walk");
+        list.add(p8);
+        //adds to paintList
+        model.addPaintList(p8);
+
+        //And a floating rubic cube
+        xPos = xPos + p6.getWidth();
+        yPos = 620 - p.getHeight() - 100;
+        Picture p9 = new Picture(xPos, yPos, "rubic");
+        list.add(p9);
+        //adds to paintList
+        model.addPaintList(p9);
+
+
+
+
+    }
+    
+    private void fillModelWithDayCards() {
+        ArrayList<DayCard> tempDayList = new ArrayList<DayCard>();
+        for(int i=0;i<list.size();i++){
+            if(list.get(i) instanceof DayCard){
+                tempDayList.add((DayCard) list.get(i));
+            }
+        }
+        model.setDayCardList(tempDayList);
+        model.setDayCardIdentifiers(dcId);
+    }
+
+    /**
+     * Method to load components, called by the constructor.
+     */
+    private void set() {
+        createMonthView();
+        createGraphics();
+        createMenu();
+        fillModelWithDayCards();
+    }
+
+    /**
+     * Getter for this class. Returns an arraylist containing all the components
+     * that was defined in set.
+     *
+     * @return an arraylist with drawables
+     */
+    public ArrayList<Drawable> get() {
+        return list;
+    }
+    
+    /**
+     * Converts an integer to a string and adds an extra character 0 if
+     * the integer is between 0 and 9 to make the total number to two.
+     * @param integer
+     * @return 
+     */
+    public String addChar(int integer) {
+        String string;
+        if(integer < 10) {
+            string = "0"+integer;
+        }
+        else string = ""+integer;
+        return string;
+    }
+}

@@ -1,0 +1,95 @@
+package Control;
+
+
+import Model.Datatypes.Instruction;
+import Model.SixteenBitModel;
+import Utils.Debug;
+import Utils.ScreenImage;
+import View.MyGlassPane;
+import java.awt.AWTException;
+import java.awt.Point;
+import java.awt.Robot;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import javax.swing.JFrame;
+
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+/**
+ *
+ * @author fredrikmakila
+ */
+public class HelpSystem {
+    private BufferedImage screenImage;
+    private MyGlassPane glassPane;
+    private SixteenBitModel model;
+    private Canvas canvas;
+    private JFrame frame;
+    private ArrayList<Instruction> instructionList = new ArrayList<Instruction>();
+
+    public HelpSystem() {
+        model = SixteenBitModel.getInstance();
+        glassPane = model.getGlassPane();
+        canvas = model.getCanvas();
+        frame = model.getFrame();
+        JFrame myFrame = frame;
+        try {
+            Robot robot = new Robot();
+            screenImage = ScreenImage.createImage(canvas);
+        } catch (AWTException ex) {
+            System.err.println("You have failed me for the last time!");
+            System.err.println(ex);
+        }
+
+        
+    }
+    
+    public void start() {
+        glassPane.drawImage(screenImage);
+        glassPane.repaint();
+        glassPane.setOpaque(true);
+        glassPane.enableMouseDispatch(false);
+        instructionEngine();
+    }
+    
+    private void instructionEngine() {
+        rotationInstruction(0, 1, 500.0);
+    }
+    
+    
+    private void rotationInstruction(int p0, int p1, Double numStep) {
+        Double rotationValue;
+        Double steps = 1/numStep;
+        Debug.debug("STEPS " + steps);
+        
+        for(double t = 0; t <= 1.0; t = t + steps) {
+            rotationValue = (1.0 - t)*p0 + t*p1;
+            instructionList.add(new Instruction(Instruction.ROTATE, rotationValue));
+        }
+        
+    }
+    
+    private void moveInstruction(Point p0, Point p1, Point p2, Double numStep) {
+        Double xValue;
+        Double yValue;
+        Double steps = 1.0/numStep;
+        Point point;
+        
+        for(double t = 0; t <= 1.0; t = t + steps) {
+            xValue = (1.0 - t)*((1.0 - t)*p0.x + t*p1.x) + t*((1.0 - t)*p1.x + t*p2.x); 
+            yValue = (1.0 - t)*((1.0 - t)*p0.y + t*p1.y) + t*((1.0 - t)*p1.y + t*p2.y);
+            
+            point = new Point(xValue.intValue(), yValue.intValue());
+            
+            instructionList.add(new Instruction(Instruction.MOVE, point));
+        }   
+    }
+    
+    public ArrayList<Instruction> getInstructionList() {
+        return instructionList;
+    }
+    
+}
