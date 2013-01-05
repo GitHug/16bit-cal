@@ -3,6 +3,8 @@
 
 <!--****COMMENT******
 XML file to store TaskObjects, EventObjects and CategoryObjects.
+
+Author: fredrikmakila
 ********COMMENT******-->
 <cal>
   <tasks>

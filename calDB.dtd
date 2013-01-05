@@ -1,7 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- 
 This document contains the rules for the calendar XML structure
-and may be used to check its validity -->
+and may be used to check its validity 
+
+Author: fredrikmakila -->
 
 <!-- The root node for the calendar -->
 <!ELEMENT cal (tasks*|events*|categories*)*>
