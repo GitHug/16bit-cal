@@ -1,0 +1,188 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package View;
+
+import Control.Interface.Drawable;
+import Control.Interface.Observer;
+import Model.Datatypes.BorderImage;
+import Model.SixteenBitModel;
+import java.awt.*;
+import javax.swing.JPanel;
+
+/**
+ * Class that creates a custom component. 
+ * This class is mostly intended as a class from where other classes can inherit from. 
+ * @author fredrikmakila
+ */
+public class CustomComponent extends JPanel implements Drawable, 
+        Observer {
+    private Color color;
+    private int stdX;
+    private int stdY;
+    private int stdWidth;
+    private int stdHeight;
+    private int width;
+    private int height;
+    private int x;
+    private int y;
+    private boolean isSelected = false;
+    private Color currentColor;
+    private int myId;
+    private SixteenBitModel model = SixteenBitModel.getInstance();
+
+
+
+    @Override
+    public void draw(Graphics g) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean within(Point p) {
+        if(p.x >= x && p.x < x+getWidth() && p.y >=y && p.y < y+getHeight()) {
+            return true;
+        }
+        else return false;
+        
+    }
+    
+    /**
+     * Constructor for this class.
+     * Inizializes the position of the component as well as its width and height.
+     * @param x The x-position of the components upper left corner.
+     * @param y The y-position of the components upper left corner.
+     * @param width The width of the component
+     * @param height The height of the component
+     */
+    public CustomComponent(int x, int y, int width, int height) {
+        super();
+        stdX = x;
+        stdY = y;
+        stdWidth = width;
+        stdHeight = height;
+        setLayout(null);
+        setOpaque(false);
+    }
+    
+    /**
+     * Another constructor for this class.
+     * Inizializes the position of the component
+     * @param x The x-position of the components upper left corner.
+     * @param y The y-position of the components upper left corner.
+     */
+    public CustomComponent(int x, int y) {
+        super();
+        this.x = x;
+        this.y = y;
+        setLayout(null);
+        setOpaque(false);
+    }
+    
+    public void setId(int id) {
+        this.myId = id;
+    }
+    
+    public int getId() {
+        return myId;
+    }
+    
+    
+    public void saveCurrentColor(Color color) {
+        currentColor = color;
+    }
+    
+    public Color getCurrentColor() {
+        return currentColor;
+    }
+    /**
+     * Sets the background color of the component
+     * @param color The new background color
+     */
+    public void setBackgroundColor(Color color) {
+        this.color = color;
+    }
+    
+    public Color getBackgroundColor() {
+        return color;
+    }
+    
+    
+    
+    /**
+     * Convenience method for public access to a method through a private method. 
+     * The reason is to avoid the warning that occurs when a constructor calls a 
+     * public class.
+     * @param border The name of the new border.
+     * @see BorderImage
+     */
+    private void setBorderByName(BorderImage border) {
+        setBorderType(border);
+    }
+    
+    /**
+     * Changes the border of the component.
+     * The method also limits the "working area" of the component by taking into account
+     * how wide the border is. 
+     * @param border The name of the new border.
+     * @see BorderImage
+     */
+    public void setBorderType(BorderImage border) {
+        ImageBorder imgBorder = new ImageBorder(border);
+        Insets inset = imgBorder.getBorderInsets(this);
+        setBounds(stdX, stdY, stdWidth, stdHeight);
+        setBorder(imgBorder);
+        width = stdWidth - (inset.left+inset.right);
+        height = stdHeight - (inset.top+inset.bottom);
+        x = stdX+inset.left;
+        y = stdY+inset.top;
+    }
+    
+    /**
+     * Returns the size of this component
+     * @return The dimension of the component.
+     */
+    @Override
+    public Dimension getSize() {
+        return new Dimension(width,height);
+    }
+    
+    /**
+     * Returns the location of this component.
+     * The location is that of the upper left corner.
+     * @return the coordinates for the component.
+     */
+    @Override
+    public Point getLocation() {
+        return new Point(x, y);
+    }
+    
+    /**
+     * Setter for the position of this component
+     * @param p new position
+     */
+    @Override
+    public void setLocation(Point p) {
+        x = p.x;
+        y = p.y;
+    }
+    
+    
+    public void isSelected(Boolean isSelected) {
+        this.isSelected = isSelected;
+    }
+    
+    public boolean getSelected() {
+        return isSelected;
+    }
+
+
+    @Override
+    public void notify(Object event) {
+        
+    }
+
+   
+}

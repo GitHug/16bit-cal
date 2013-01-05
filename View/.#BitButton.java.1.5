@@ -1,0 +1,92 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package View;
+
+import Control.Actions.DeSelectEvent;
+import Control.Actions.SelectedEvent;
+import Model.SixteenBitModel;
+import java.awt.*;
+import java.awt.geom.Rectangle2D;
+import java.util.Observable;
+
+/**
+ * This class not yet implemented.
+ * @author fredrikmakila
+ */
+public class BitButton extends CustomComponent {
+    private String text;
+    private Point p;
+    private Dimension d;
+    private Color currentColor;
+    private SixteenBitModel model;
+    
+    public BitButton(int x, int y, int width, int height, String text, int id) {
+        super(x, y, width, height);
+        this.text = text;
+        setId(id);
+        model = SixteenBitModel.getInstance();
+    }
+    
+    @Override
+    public void notify(Object arg) {
+        if(arg instanceof SelectedEvent) {
+            setSelected((SelectedEvent) arg);
+        }
+        if(arg instanceof DeSelectEvent) {
+            setDeSelected((DeSelectEvent) arg);
+        }
+    }
+    
+    public void setSelected(SelectedEvent event) {
+        int selectedId = (Integer) event.getId();
+        if (getId() == selectedId && !getSelected()) {
+            isSelected(true);
+            currentColor = getBackgroundColor();
+            setBackgroundColor(currentColor.darker());
+            repaint();
+            model.nextMonth();
+        }
+        else if (getSelected()){
+            isSelected(false);
+            setBackgroundColor(currentColor);
+            repaint();
+        }        
+    }
+
+    @Override
+    public void draw(Graphics g) {
+        p = getLocation();
+        d = getSize();
+        Graphics2D g2d = (Graphics2D) g;
+        //Sets antialiasing for smoother shapes
+        g2d.setRenderingHint(
+           RenderingHints.KEY_ANTIALIASING,                
+           RenderingHints.VALUE_ANTIALIAS_ON);
+        //Create a rectangle
+        g.setColor(getBackgroundColor());
+        g.fillRect(p.x, p.y, d.width, d.height);
+        //Set font color
+        g.setColor(Color.darkGray);
+        
+        //Gets available fonts and sets a font
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        String []fontFamilies = ge.getAvailableFontFamilyNames(); 
+        Font font = new Font(fontFamilies[0], Font.BOLD, 12);
+        g.setFont(font);
+        //Gets the width and height of the string
+        Rectangle2D stringBounds = g.getFontMetrics().getStringBounds(text, g);
+        g2d.drawString(text, p.x + (int) (d.width/2 - stringBounds.getCenterX()), p.y + (int) (d.height/2 - stringBounds.getCenterY()));
+        Graphics grek = g.create();
+    }
+
+    private void setDeSelected(DeSelectEvent event) {
+        int id = (Integer) event.getId();
+        if(getId() == id) {
+            setBackgroundColor(currentColor);
+            repaint();
+        }
+    }
+}

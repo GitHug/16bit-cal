@@ -1,0 +1,109 @@
+
+package View;
+
+import Control.Interface.Observer;
+import Model.Datatypes.Complete;
+import Model.Datatypes.Priority;
+import Model.Datatypes.TaskObject;
+import Model.SixteenBitModel;
+import java.awt.Container;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import javax.swing.DefaultListModel;
+import javax.swing.JFrame;
+import javax.swing.JList;
+import javax.swing.JTable;
+
+/**
+ * Initiates the window where the user can view tasks.
+ * @author Robert
+ */
+public class DayCardWindow extends JFrame implements Observer {
+    private ButtonPanel buttonpanel;
+    private Container pane;
+    private DefaultListModel listModel = new DefaultListModel();
+    private JTable list;
+    private DateFormat tdf = new SimpleDateFormat("yyyy-MM-dd");
+    private DateFormat ttf = new SimpleDateFormat("HH:mm");
+    private String sDates = "2012-12-12";
+    private String sTimes = "12:12";        
+    private Date tDate;
+    private Date tTime;
+    private Priority tprio = new Priority("normal");
+    private Complete tcomp = new Complete("no");
+    private TaskObject to;
+    private ArrayList<TaskObject> Tasklist;
+    
+    /**
+     * Constructor for the class.
+     */
+    public DayCardWindow() {
+        //this.setResizable(false);
+        System.out.println(getPreffSize());
+        addComponentsToPane();
+    }
+    
+    /**
+     * Adds all the components(buttons etc.) to the DayCardWindow.
+     */
+    private void addComponentsToPane() {
+        pane = this.getContentPane();
+        pane.setLayout(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+        
+        SixteenBitModel model = SixteenBitModel.getInstance();        
+        Tasklist = new ArrayList<TaskObject>();
+        
+        //Getting list of tasks
+        if(model.getTasks()!=null) {
+            Tasklist = model.getTasks();
+        }
+        
+        //Empy listmodel
+        listModel.clear();
+        
+        //Fill listmodel with list of tasks
+        for(int i=0;i<Tasklist.size();i++){
+            listModel.add(i,Tasklist.get(i));
+        }
+
+        JList dataList = new JList(listModel);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 0;
+        //c.anchor = GridBagConstraints.PAGE_START;
+        pane.add(dataList, c);
+        
+        buttonpanel = new ButtonPanel(this);
+        c.fill = GridBagConstraints.NONE;
+        c.gridy = 2;
+        c.weighty = 1.0;
+        //c.insets = new Insets(10, 50, 5,50);
+        c.anchor = GridBagConstraints.PAGE_END;
+        pane.add(buttonpanel, c);   
+    }
+    
+    /**
+     * Removes the contents of content pane, adds new content to pane and
+     * repaints the DayCardWindow.
+     */
+    public void updateGUI() {
+        this.getContentPane().removeAll();
+        addComponentsToPane();
+        this.validate();
+        this.repaint();
+    }
+    
+    /**
+     * @param event
+     */
+    @Override
+    public void notify(Object event) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+        
+}

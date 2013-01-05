@@ -1,0 +1,173 @@
+package View;
+
+import Control.Actions.SelectedEvent;
+import Control.Actions.UpdateEvent;
+import Model.Datatypes.BorderImage;
+import Model.SixteenBitModel;
+import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.geom.Rectangle2D;
+
+/**
+ * The graphical representation of a day with tasks and events
+ * @author Robin
+ * @author fredrikmakila
+ */
+@SuppressWarnings("LeakingThisInConstructor")
+public class DayCard extends CustomComponent {
+    private String text;
+    private Color currentColor;
+    private BorderImage defaultBorder = new BorderImage("beam");
+    //private JButton button = new JButton();
+    private Point p;
+    private Dimension d;
+    private boolean isSelected;
+    private int fontSize = 12;
+    private SixteenBitModel model;
+    private Color textColor = Color.DARK_GRAY;
+    private boolean showBorder = true;
+    private boolean borderVisible = true;
+    private BorderImage currentBorder;
+    private ActionListener action;
+
+    
+    /**
+     * Constructor to create a daycard containing a string.
+     * @param x The x-position of the daycard
+     * @param y The y-position of the daycard
+     * @param width The width of the daycard
+     * @param height The height of the daycard
+     * @param text The text of the daycard
+     * @param id The id of the daycard
+     */
+    public DayCard(int x, int y, int width, int height, String text, int id){
+        super(x, y, width, height);
+        this.text = text;
+        setBackgroundColor(Color.lightGray);
+        setBorderByName(defaultBorder);
+        setId(id);
+        model = SixteenBitModel.getInstance();
+    }
+    
+    /**
+     * Convenience method for public access to setBorderByName.
+     * @param border The name of the new border.
+     * @see BorderImage
+     */
+    private void setBorderByName(BorderImage border) {
+        currentBorder = border;
+        setBorderType(border);
+    }
+    
+    @Override
+    public void notify(Object arg) {
+        if(arg instanceof SelectedEvent) { 
+            setSelected((SelectedEvent) arg);
+        }
+        if(arg instanceof UpdateEvent) {
+            updateDayCard((UpdateEvent) arg);
+        }
+
+    }
+    
+    /**
+     * Sets the font size of the text.
+     * @param size The font size.
+     */
+    public void setFontSize(int size) {
+        fontSize = size;
+    }
+    
+    /**
+     * Method that is called when a daycard is selected.
+     * @param event A selected event.
+     */
+    private void setSelected(SelectedEvent event) {
+        int selectedId = (Integer) event.getId();
+        if (getId() == selectedId && !getSelected()) {
+            isSelected(true);
+            currentColor = getBackgroundColor();
+            System.out.println("MY ID IS " + getId());
+            setBackgroundColor(currentColor.darker());
+            if(action != null) {
+                action.actionPerformed(null);
+            }
+            repaint();
+        }
+        else if (getSelected()){
+            isSelected(false);
+            setBackgroundColor(currentColor);
+            //repaint();
+            revalidate();
+        }
+    }
+    
+    /**
+     * Updates the daycard. 
+     * @param event An update event. 
+     */
+    private void updateDayCard(UpdateEvent event) {
+        int selectedId = (Integer) event.getId();
+        if(getId() == selectedId) {
+            text = event.getString();
+            textColor = event.getTextColor();
+            showBorder = event.getShowBorder();
+            if(borderVisible && !showBorder) {
+                setBorderType(null);
+                borderVisible = false;
+            }
+            else if(!borderVisible && showBorder) {
+                setBorderType(defaultBorder);
+                borderVisible = true;
+            }
+            setBackgroundColor(event.getColor());
+            //validate();
+            //repaint();
+        }
+    }
+    
+    /**
+     * Sets the default border for the daycard.
+     * @param border
+     */
+    public void setDefaultBorder(String border) {
+        defaultBorder = new BorderImage(border);
+    }
+    
+    /**
+     * Draws the daycard
+     * @param g The grahpics for the daycard
+     */
+    @Override
+    public void draw(Graphics g) {
+        p = getLocation();
+        d = getSize();
+        Graphics2D g2d = (Graphics2D) g;
+        //Sets antialiasing for smoother shapes
+        g2d.setRenderingHint(
+           RenderingHints.KEY_ANTIALIASING,                
+           RenderingHints.VALUE_ANTIALIAS_ON);
+        //Create a rectangle
+        g.setColor(getBackgroundColor());
+        g.fillRect(p.x, p.y, d.width, d.height);
+        //Set font color
+        g.setColor(textColor);
+        
+        //Gets available fonts and sets a font
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        String []fontFamilies = ge.getAvailableFontFamilyNames(); 
+        Font font = new Font(fontFamilies[0], Font.BOLD, fontSize);
+        g.setFont(font);
+        //Gets the width and height of the string
+        Rectangle2D stringBounds = g.getFontMetrics().getStringBounds(text, g);
+        g2d.drawString(text, p.x + (int) (d.width/2 - stringBounds.getCenterX()), p.y + (int) (d.height/2 - stringBounds.getCenterY()));
+    }
+    
+    /**
+     * Adds an action listener to this button.
+     * @param action The actionlistener to be attached to the daycard.
+     */
+    public void addActionListener(ActionListener action) {
+        this.action = action;
+    } 
+}
