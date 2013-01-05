@@ -1,0 +1,101 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- 
+This document contains the rules for the calendar XML structure
+and may be used to check its validity -->
+
+<!-- The root node for the calendar -->
+<!ELEMENT cal (tasks*|events*|categories*)*>
+
+<!--___________TASK______________-->
+
+<!-- The node that contains all the tasks -->
+<!ELEMENT tasks (task)*>
+
+<!-- Specifies what elements make up a task. Each task is
+associated with a unique, mandatory ID -->
+<!ELEMENT task (tname|tinfo|due_date|due_time|complete|prio|tcategory)*>
+<!ATTLIST task 
+	id CDATA #REQUIRED
+>
+
+<!--- The name of the task -->
+<!ELEMENT tname (#PCDATA)>
+
+<!--- The additional information attached to the task -->
+<!ELEMENT tinfo (#PCDATA)>
+
+<!--- The date when the task should be completed -->
+<!ELEMENT due_date (#PCDATA)>
+
+<!--- The time when the task should be completed -->
+<!ELEMENT due_time (#PCDATA)>
+
+<!--- Specifies if the task is finished or not -->
+<!ELEMENT complete (#PCDATA)>
+<!ATTLIST complete
+	status  (yes | no) "no"
+>
+
+<!--- The priority of the task -->
+<!ELEMENT prio (#PCDATA)>
+<!ATTLIST prio
+	priority  (low | normal | high) "normal"
+>
+
+<!--- The category of the task -->
+<!ELEMENT tcategory (#PCDATA)>
+
+<!--___________EVENT______________-->
+
+<!-- The node that contains all the events -->
+<!ELEMENT events (event)*>
+
+<!-- The elements that make up an event
+each event has a unique, mandatory ID -->
+<!ELEMENT event (ename|einfo|start_date|start_time|end_date|end_time|ecategory)*>
+<!ATTLIST event 
+	id CDATA #REQUIRED
+>
+
+<!--- The name of the event -->
+<!ELEMENT ename (#PCDATA)>
+
+<!--- The additional information attached to the event -->
+<!ELEMENT einfo (#PCDATA)>
+
+<!--- The date when the event should start -->
+<!ELEMENT start_date (#PCDATA)>
+
+<!--- The time when the task should start -->
+<!ELEMENT start_time (#PCDATA)>
+
+<!--- The date when the event should end -->
+<!ELEMENT end_date (#PCDATA)>
+
+<!--- The time when the task should end -->
+<!ELEMENT end_time (#PCDATA)>
+
+<!--- The category of the task -->
+<!ELEMENT ecategory (#PCDATA)>
+
+<!--___________CATEGORIES______________-->
+
+<!-- The node that contains all the categories -->
+<!ELEMENT categories (category)*>
+
+<!-- The elements that make up a category
+Each category has a unique id attached to it -->
+<!ELEMENT category (cname|icon|color)*>
+<!ATTLIST category 
+	id CDATA #REQUIRED
+>
+
+<!-- The name of the category -->
+<!ELEMENT cname (#PCDATA)>
+
+<!-- The icon for the category -->
+<!ELEMENT icon (#PCDATA)>
+
+<!-- The color for the category -->
+<!ELEMENT color (#PCDATA)>
+

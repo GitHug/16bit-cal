@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE cal SYSTEM "calDB.dtd">
+
+<!--****COMMENT******
+XML file to store TaskObjects, EventObjects and CategoryObjects.
+********COMMENT******-->
+<cal>
+  <tasks>
+    <task id="0">
+      <tname>qwerty</tname>
+      <tinfo />
+      <due_date>2012-05-17</due_date>
+      <due_time>12:12</due_time>
+      <complete status="no" />
+      <prio priority="low" />
+      <tcategory>Standard</tcategory>
+    </task>
+    <task id="1">
+      <tname>low</tname>
+      <tinfo />
+      <due_date>2012-05-09</due_date>
+      <due_time>12:12</due_time>
+      <complete status="no" />
+      <prio priority="high" />
+      <tcategory>Standard</tcategory>
+    </task>
+  </tasks>
+  <events>
+    <event id="0">
+      <ename>Durr</ename>
+      <einfo>Derpa</einfo>
+      <start_date>2012-05-18</start_date>
+      <start_time>03:03</start_time>
+      <end_date>2012-05-18</end_date>
+      <end_time>05:05</end_time>
+      <ecategory>Derpatron</ecategory>
+    </event>
+    <event id="1">
+      <ename>uhuojjojoi</ename>
+      <einfo />
+      <start_date>2012-05-18</start_date>
+      <start_time>00:00</start_time>
+      <end_date>2012-05-18</end_date>
+      <end_time>00:00</end_time>
+      <ecategory>Standard</ecategory>
+    </event>
+    <event id="2">
+      <ename>DERPA</ename>
+      <einfo />
+      <start_date>2012-05-17</start_date>
+      <start_time>00:00</start_time>
+      <end_date>2012-05-17</end_date>
+      <end_time>00:00</end_time>
+      <ecategory>Standard</ecategory>
+    </event>
+  </events>
+  <categories>
+    <category id="0">
+      <cname>Derpatron</cname>
+      <icon />
+      <color>-10066177</color>
+    </category>
+  </categories>
+</cal>
+
