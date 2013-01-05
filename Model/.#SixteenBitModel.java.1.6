@@ -1,0 +1,52 @@
+package Model;
+
+import java.util.ArrayList;
+import java.util.Observable;
+
+/**
+ * A Class that acts as the model of the Calendar
+ * @author Robin Horneman
+ */
+
+public class SixteenBitModel extends Observable{
+    
+   /**
+    * This class should have the list of events and tasks as well
+    * as information about which daycards that are selected.
+    * 
+    * It should also include setters and getters for all this information
+    * 
+    */
+    
+    //Symbols used for denoting which view we're in
+    public static final int MONTHVIEW = 0;
+    public static final int WEEKVIEW = 1;
+    public static final int DAYVIEW = 2;
+            
+    private int currentView = MONTHVIEW;
+    
+    private int id;
+    
+    private ArrayList<Integer> days; 
+    private ArrayList<Integer> weeks;
+    //+ Task and events
+    
+    /**
+     * The Standard constructor
+     */
+    public SixteenBitModel(){
+    }
+    
+    public void setSelected(int id) {
+        setChanged();
+        notifyObservers(id);
+    }
+    
+    public int getSelected() {
+        return id;
+    }
+    
+    public void changeMonth() {
+        
+    }
+}

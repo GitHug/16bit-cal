@@ -1,0 +1,369 @@
+package Model;
+
+import Control.Actions.DeSelectEvent;
+import Control.Actions.SelectedEvent;
+import Control.Actions.UpdateEvent;
+import Control.Interface.Observable;
+import Control.Interface.ObservableRegistration;
+import Model.Database.XMLInputOutput;
+import Model.Datatypes.CircularArrayList;
+import Model.Datatypes.EventObject;
+import Model.Datatypes.TaskObject;
+import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.Calendar;
+
+/**
+ * A singleton Class that acts as the model of the Calendar
+ * @author Robin Horneman
+ */
+
+public class SixteenBitModel extends CalendarMethods{
+    
+   /**
+    * This class should have the list of events and tasks as well
+    * as information about which daycards that are selected.
+    * 
+    * It should also include setters and getters for all this information
+    * 
+    */
+    
+    
+    /**
+     * Implements the singleton aspect of the Model. 
+     * You can only get one instance of this class.
+     * @return The singleton instance
+     */
+    public static SixteenBitModel getInstance() {
+      if(instance == null) {
+         instance = new SixteenBitModel();
+      }
+      return instance;
+   }
+    
+    private XMLInputOutput xmlhandler = new XMLInputOutput();
+    
+    private static SixteenBitModel instance = null;
+    
+    //Symbols used for denoting which view we're in
+    public static final int MONTHVIEW = 0;
+    public static final int WEEKVIEW = 1;
+    public static final int DAYVIEW = 2;
+            
+    private int currentView = MONTHVIEW;
+    
+    private int canvasSizeWidth = 964;
+    private int canvasSizeHeight = 559;
+    
+    //The id of the selected DayCard
+    private int id;
+    
+    //The current month
+    private int currentMonth = 0;
+    
+    //The current year
+    private int currentYear;
+    
+    //The id of the first daycard created
+    private int firstDayCardId;
+    
+    //The id of the last daycard created
+    private int lastDayCardId;
+    
+    //The id of the month daycard
+    private int monthCardId;
+    
+    //The id of the first weekcard
+    private int firstWeekCardId;
+    
+    //The id of the last weekcard
+    private int lastWeekCardId;
+    
+    //A list containing all the available months
+    private CircularArrayList<String> allMonths = new CircularArrayList<String>("January", "February",
+            "March", "April", "May", "June", "July", "August", "September", "October", 
+            "November", "December");
+    
+    
+    //Lists of things that's supposed to show up in the differen Views
+    private ArrayList<Integer> days; 
+    private ArrayList<Integer> weeks;
+    private ArrayList<EventObject> events;
+    private ArrayList<TaskObject> tasks;
+    
+    private Observable<SelectedEvent> selectedObservable = new ObservableImplementation<SelectedEvent>(); 
+    private Observable<UpdateEvent> updateObservable = new ObservableImplementation<UpdateEvent>();
+    private Observable<DeSelectEvent> deSelectedObservable = new ObservableImplementation<DeSelectEvent>();
+
+    public ObservableRegistration<SelectedEvent> selectedObservableRegistration() {
+        return this.selectedObservable;
+    }
+    
+    public ObservableRegistration<DeSelectEvent> deSelectedObservableRegistration() {
+        return this.deSelectedObservable;
+    }
+
+    public ObservableRegistration<UpdateEvent> updateObservableRegistration() {
+      return this.updateObservable;
+   }
+
+     /**
+     * The Standard constructor
+     */
+    protected SixteenBitModel(){
+        //events = xmlhandler.getEvents();
+        //tasks = xmlhandler.getTasks();
+    }
+    
+    /**
+     * Method for returning all events in the model associated with the 
+     * current date.
+     * @return list of events starting this month
+     */
+    public ArrayList<EventObject> getThisMonthEvents(){
+        int month;
+        ArrayList<EventObject> monthevents = null;
+        Calendar cal = Calendar.getInstance();
+        if(events!=null) {
+            for(int i = 0;i<events.size();i++){
+                cal.setTime(events.get(i).getStartDate());
+                month = cal.get(Calendar.MONTH);            
+                if(month==currentMonth){
+                    monthevents.add(events.get(i));
+                }
+            }
+        }
+        return monthevents;
+    }
+    
+    /**
+     * Method for returning all tasks in the model associated with the 
+     * current date.
+     * @return list of tasks with deadline this month
+     */
+    public ArrayList<TaskObject> getThisMonthTasks(){
+        int month;
+        ArrayList<TaskObject> monthtasks = null;
+        Calendar cal = Calendar.getInstance();
+        if(tasks!=null) {
+            for(int i = 0;i<tasks.size();i++){
+                cal.setTime(tasks.get(i).getDate());
+                month = cal.get(Calendar.MONTH);            
+                if(month==currentMonth){
+                    monthtasks.add(tasks.get(i));
+                }
+            }
+        }
+        return monthtasks;
+    }
+    
+    /**
+     * Setter
+     * @param dim the new dimension of the canvas 
+     */
+    public void setCanvasSize(Dimension dim){
+        canvasSizeWidth = dim.width;
+        canvasSizeHeight = dim.height;
+    }
+    
+    /**
+     * Getter
+     * @return The canvas dimensions
+     */
+    public Dimension getCanvasSize(){
+        return new Dimension(canvasSizeWidth,canvasSizeHeight);
+    }
+    
+    /**
+     * Setter
+     * @param id the ID of the new selected DayCard
+     */
+    public void setSelected(int id) {
+        this.selectedObservable.notifyObservers(new SelectedEvent(id));
+    }
+    
+    public void setDeSelected(int id) {
+        this.deSelectedObservable.notifyObservers(new DeSelectEvent(id));
+    }
+    
+    public void nextMonth() {
+
+        int startId;
+        int startIndex;
+        int numDays;
+        int prevMonth;
+        int prevYear;
+        ArrayList<UpdateEvent> list = new ArrayList<UpdateEvent>();
+        String month = allMonths.incrementAndGet();
+        currentMonth = allMonths.getIndex();
+        if (currentMonth == 0) {
+            currentYear ++;
+        }
+        //Updates the month
+        UpdateEvent event = new UpdateEvent(monthCardId, month);
+        event.setColor(event.MONTHCOLOR);
+        //this.updateObservable.notifyObservers(event);
+        list.add(event);
+        startId = getWeekDay(currentYear, currentMonth) + firstDayCardId;
+        //Create the previous month
+        if(currentMonth - 1 < 0) {
+            prevMonth = 11;
+            prevYear = currentYear - 1;
+        }
+        else {
+            prevMonth = currentMonth - 1;
+            prevYear = currentYear;
+        }
+        numDays = getNumberOfDays(prevYear, prevMonth);
+        numDays = numDays - startId + 1;
+        for(int i = firstDayCardId; i < startId; i++) {
+            int d = numDays + i;
+            UpdateEvent eventPrev = new UpdateEvent(i, "" + d);
+            eventPrev.setColor(eventPrev.PREVMONTH);
+            //this.updateObservable.notifyObservers(eventPrev);
+            list.add(eventPrev);
+        }
+
+        //Create the days in the current month
+        for(int j = startId; j<getNumberOfDays(currentYear, currentMonth) + startId; j++) {
+            int d = j - startId +1;
+            UpdateEvent eventCurr = new UpdateEvent(j, "" + d);
+            eventCurr.setColor(eventCurr.CURRENTMONTH);
+            //this.updateObservable.notifyObservers(eventCurr);
+            list.add(eventCurr);
+        }
+        
+        //Set the days for the rest of the daycard
+        int finalRow = lastDayCardId - 7;
+        startId = getNumberOfDays(currentYear, currentMonth) + startId;
+        int lastId = lastDayCardId;
+        if(startId <= finalRow+1) {
+            lastId = finalRow;
+        }
+        for(int k = startId; k <= lastId; k++) {
+            int d = k - startId + 1;
+            UpdateEvent eventNext = new UpdateEvent(k, ""+d);
+            eventNext.setColor(eventNext.NEXTMONTH);
+            //this.updateObservable.notifyObservers(eventNext);
+            list.add(eventNext);
+        }
+        
+        for(int l = lastId + 1; l <= lastDayCardId; l++) {
+            int d = 0;
+            UpdateEvent eventNext = new UpdateEvent(l, ""+d);
+            eventNext.setTransparent();
+            //this.updateObservable.notifyObservers(eventNext);
+            list.add(eventNext);
+        }
+        
+        //Sets the weeks
+        ArrayList<Integer> firstWeek = getWeekNumber(currentYear, currentMonth);
+        for(int m = 0; m < firstWeek.size(); m++) {
+            int weekId = firstWeekCardId + m;
+            UpdateEvent eventWeek = new UpdateEvent(weekId, ""+firstWeek.get(m));
+            eventWeek.setColor(eventWeek.WEEKCOLOR);
+            //this.updateObservable.notifyObservers(eventWeek);
+            list.add(eventWeek);
+        }
+        if(firstWeek.size() < 6) {
+            UpdateEvent eventWeek = new UpdateEvent(lastWeekCardId, "");
+            eventWeek.setTransparent();
+            //this.updateObservable.notifyObservers(eventWeek);
+            list.add(eventWeek);
+        } 
+        
+        //Notifies the observers
+        for(int i = 0; i < list.size(); i++) {
+            this.updateObservable.notifyObservers(list.get(i));
+        }
+    }
+        
+    /**
+     * Getter
+     * @return The ID of the selected DayCard
+     */
+    public int getSelected() {
+        return id;
+    }
+    
+    /**
+     * Sets which month that's selected and updates all the lists from the XML
+     * @param month the new month
+     */
+    public void changeMonth(int month) {
+        currentMonth = month;
+        /*Updates Lists here!*/
+    }
+    
+    public void setMonth(int i) {
+        currentMonth = i;
+        allMonths.setStartIndex(i);
+    }
+
+    @Override
+    public int getMonth() {
+        return currentMonth;
+    }
+    public void setFirstDayCardId(int i) {
+        firstDayCardId = i;
+    }
+    
+    public void setLastDayCardId(int i) {
+        lastDayCardId = i;
+    }
+    
+    public void setMonthCardId(int i) {
+        monthCardId = i;
+    }
+    
+    public void setFirstWeekCardId(int i) {
+        firstWeekCardId = i;
+    }
+    
+    public void setLastWeekCardId(int i) {
+        lastWeekCardId = i;
+    }
+    
+
+    
+    /**
+     * Add a new task to the list of tasks 
+     * @param task the task to be added
+     */
+    public void addTask(TaskObject task) {
+        if(tasks==null){
+            System.out.println("INTE NULL!!!!!!!!!!!!!!!!!!!!SIXTEEN");
+            tasks = new ArrayList<TaskObject>();
+        }
+        tasks.add(task);
+    }
+    
+    /**
+     * Add a new event to the list of events
+     * @param event the event to be added
+     */
+    public void addEvent(EventObject event) {
+        events.add(event);
+    }
+    
+    /**
+     * Getter
+     * @return All the tasks in the model
+     */
+    public ArrayList<TaskObject> getTasks(){
+        return tasks;
+    }
+    
+    /**
+     * Getter
+     * @return All the events in the model
+     */
+    public ArrayList<EventObject> getEvents(){
+        return events;
+    }
+    
+    public void setYear(int year) {
+        currentYear = year;
+    }
+    
+}
