@@ -1,0 +1,49 @@
+
+<project name="16-bit-calendar" default="dist" basedir=".">
+    <description>
+        Build file for 16bit calendar with ant
+
+	Edited by fredrikmakila
+    </description>
+  <!-- set global properties for this build -->
+  <property name="src" location=""/>
+  <property name="build" location="build"/>
+  <property name="dist"  location="dist"/>
+
+  <target name="init">
+    <!-- Create the time stamp -->
+    <tstamp/>
+    <!-- Create the build directory structure used by compile -->
+    <mkdir dir="${build}"/>
+  </target>
+
+  <target name="compile" depends="init"
+        description="compile the source " >
+    <!-- Compile the java code from ${src} into ${build} -->
+    <javac srcdir="${src}" destdir="${build}"/>
+    <copy todir="build">
+    <fileset dir=""
+             excludes="*/.java" />
+    </copy>
+  </target>
+
+  <target name="dist" depends="compile"
+        description="generate the distribution" >
+    <!-- Create the distribution directory -->
+    <mkdir dir="${dist}/lib"/>
+
+    <!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file -->
+    <jar jarfile="${dist}/lib/16BitCalendar-${DSTAMP}.jar" basedir="${build}">
+      <manifest>
+	<attribute name="Main-Class" value="Control.Main"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="clean"
+        description="clean up" >
+    <!-- Delete the ${build} and ${dist} directory trees -->
+    <delete dir="${build}"/>
+    <delete dir="${dist}"/>
+  </target>
+</project>
