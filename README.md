@@ -24,3 +24,9 @@ Features available in this program:
 -Ability to start a "Help" system (*Hint* press the help button) which explains different parts of the program wich a fancy animation. 
 
 -Super secret easter egg!  
+
+How to install:
+
+Get the build.xml file and run $ant. That's about it. The resulting jar-file ends up in /dist/lib/
+
+Enjoy!
