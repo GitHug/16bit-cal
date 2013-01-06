@@ -7,7 +7,8 @@ The program is created in Java with the user interface components created using 
 
 This project uses JDom, an open source Java-based document object model for XML. It allows for easy to use storing and retrieval of data in XML. Credit goes to the people at www.jdom.org or here at https://github.com/hunterhacker/jdom/ .
 
-Features available in this program:
+Features available:
+-----------
 
 -A fancy 16 bit inspired user interface 
 
@@ -25,7 +26,8 @@ Features available in this program:
 
 -Super secret easter egg!  
 
-How to install:
+Installation:
+-----------
 
 Get the build.xml file and run $ant. That's about it. The resulting jar-file ends up in /dist/lib/
 
