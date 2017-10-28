@@ -5,6 +5,7 @@ import Control.Actions.Action;
 import Model.Datatypes.CategoryObject;
 import Model.SixteenBitModel;
 
+import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 

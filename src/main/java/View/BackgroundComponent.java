@@ -7,6 +7,8 @@ package View;
 
 import Model.Datatypes.BorderImage;
 
+import java.awt.*;
+
 /**
  * Creates a background component
  * @author fredrikmakila

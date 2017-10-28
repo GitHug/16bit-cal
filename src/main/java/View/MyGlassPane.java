@@ -11,7 +11,9 @@ import Model.Datatypes.Instruction;
 import Model.SixteenBitModel;
 import Utils.OsUtils;
 
+import javax.swing.*;
 import javax.swing.event.MouseInputAdapter;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;

@@ -11,6 +11,7 @@ import Model.Datatypes.BorderImage;
 import Model.SixteenBitModel;
 
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * Class that creates a custom component. 

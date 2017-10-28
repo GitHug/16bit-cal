@@ -11,6 +11,7 @@ import Model.Datatypes.BorderPiece;
 
 import javax.swing.*;
 import javax.swing.border.AbstractBorder;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.ArrayList;

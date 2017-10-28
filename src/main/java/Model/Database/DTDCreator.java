@@ -4,6 +4,8 @@
  */
 package Model.Database;
 
+import java.io.*;
+
 /**
  * A class for creating a DTD file. 
  * The name of the DTD is defined by the constructor, however it is supposed to be 
