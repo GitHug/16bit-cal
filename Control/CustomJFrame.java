@@ -1,8 +1,8 @@
 package Control;
 
+import javax.swing.*;
 import java.awt.event.HierarchyBoundsListener;
 import java.awt.event.HierarchyEvent;
-import javax.swing.JFrame;
 
 /**
  * Our Custom JFrame that controls what happens when

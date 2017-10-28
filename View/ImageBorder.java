@@ -8,12 +8,12 @@ package View;
 import Model.Database.ResourceHandler;
 import Model.Datatypes.BorderImage;
 import Model.Datatypes.BorderPiece;
-import java.awt.*;
+
+import javax.swing.*;
+import javax.swing.border.AbstractBorder;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.ArrayList;
-import javax.swing.ImageIcon;
-import javax.swing.border.AbstractBorder;
 
 /**
  * Class that paints a custom border around a component.

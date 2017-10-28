@@ -7,15 +7,12 @@ package View;
 import Control.Actions.Action;
 import Model.Datatypes.CategoryObject;
 import Model.SixteenBitModel;
-import java.awt.Container;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+
+import java.awt.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import javax.swing.*;
 
 /**
  * Initiates the window where the user adds a event.

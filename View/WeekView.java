@@ -3,9 +3,10 @@ package View;
 import Model.Datatypes.CardStuffList;
 import Model.SixteenBitModel;
 import Model.WeekViewModel;
-import java.awt.Graphics;
+
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
-import javax.swing.JPanel;
 
 /**
  * The view that shows a week with days and their events

@@ -11,9 +11,8 @@ import Model.SixteenBitModel;
 import View.CustomComponent;
 import View.DayCard;
 import View.MyGlassPane;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Point;
+
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;

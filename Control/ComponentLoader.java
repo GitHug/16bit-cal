@@ -14,7 +14,9 @@ import View.BackgroundComponent;
 import View.BitButton;
 import View.Checkbox;
 import View.DayCard;
-import java.awt.Color;
+
+import javax.swing.*;
+import java.awt.*;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -24,7 +26,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
-import javax.swing.ToolTipManager;
 
 /**
  * Class that initiates a lot of program parameters at startup; 

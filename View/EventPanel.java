@@ -1,11 +1,9 @@
 package View;
 
 import Model.Datatypes.EventObject;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * The graphical representation of an event to be shown inside the DayView

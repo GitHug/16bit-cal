@@ -9,8 +9,8 @@ import Control.Interface.Drawable;
 import Control.Interface.Observer;
 import Model.Datatypes.BorderImage;
 import Model.SixteenBitModel;
-import java.awt.*;
-import javax.swing.JPanel;
+
+import javax.swing.*;
 
 /**
  * Class that creates a custom component. 

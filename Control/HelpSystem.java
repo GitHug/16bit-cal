@@ -6,12 +6,11 @@ import Model.SixteenBitModel;
 import Utils.OsUtils;
 import Utils.ScreenImage;
 import View.MyGlassPane;
-import java.awt.AWTException;
-import java.awt.Point;
-import java.awt.Robot;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import javax.swing.JFrame;
 
 /**
  * A class for creating a help system.

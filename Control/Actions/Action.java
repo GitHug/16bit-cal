@@ -5,15 +5,14 @@ import Control.AnimationEngine;
 import Control.HelpSystem;
 import Model.Datatypes.*;
 import Model.SixteenBitModel;
-import Utils.Debug;
 import View.*;
+
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
 
 /**
  * Class that handles different action depending on in parameters

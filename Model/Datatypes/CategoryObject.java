@@ -5,8 +5,8 @@
 
 package Model.Datatypes;
 
-import java.awt.Color;
-import javax.swing.ImageIcon;
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * A class that defines the structure of a CategoryObject.

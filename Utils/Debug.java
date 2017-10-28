@@ -5,8 +5,6 @@
 
 package Utils;
 
-import java.util.Collection;
-
 /**
  * Class for making debuggin easier, just typing debug instead of
  * system.out.print.

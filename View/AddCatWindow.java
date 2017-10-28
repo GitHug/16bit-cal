@@ -1,11 +1,8 @@
 package View;
 
 import Control.Actions.Action;
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import javax.swing.*;
+
+import java.awt.*;
 
 /**
  * A class for adding a new taskcategory in a new window

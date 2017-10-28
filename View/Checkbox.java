@@ -7,12 +7,12 @@ package View;
 import Control.Actions.DeSelectEvent;
 import Control.Actions.SelectedEvent;
 import Model.Database.ResourceHandler;
-import java.awt.*;
+
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
 import java.net.URL;
-import javax.swing.ImageIcon;
 
 /**
  * This class creates the custom checkbox component

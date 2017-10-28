@@ -5,13 +5,9 @@
 package View;
 
 import Control.Actions.Action;
-import java.awt.Container;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
+
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * Initiates the window where the user can view information about the application.

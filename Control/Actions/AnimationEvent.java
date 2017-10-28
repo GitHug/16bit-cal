@@ -6,7 +6,8 @@
 package Control.Actions;
 
 import Model.Datatypes.Priority;
-import java.awt.Color;
+
+import java.awt.*;
 
 /**
  * Simple event class used to make objects animate. 

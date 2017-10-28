@@ -5,8 +5,8 @@
 
 package Model.Database;
 
-import Model.Database.ResourceHandler.BorderType;
 import Model.Datatypes.BorderPiece;
+
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;

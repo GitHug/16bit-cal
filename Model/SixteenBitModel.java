@@ -13,8 +13,9 @@ import View.Checkbox;
 import View.DayCard;
 import View.MenuBar;
 import View.MyGlassPane;
-import java.awt.Color;
-import java.awt.Dimension;
+
+import javax.swing.*;
+import java.awt.*;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -23,7 +24,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JFrame;
 
 /**
  * A singleton Class that acts as the model of the Calendar. This class should

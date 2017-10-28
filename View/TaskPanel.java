@@ -1,12 +1,9 @@
 package View;
 
 import Model.Datatypes.TaskObject;
-import java.awt.Graphics;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * The graphical representation of a task to be shown inside the DayView

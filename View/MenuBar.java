@@ -5,13 +5,9 @@
 package View;
 
 import Control.Actions.Action;
-import java.awt.AlphaComposite;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+
+import javax.swing.*;
 import java.awt.event.KeyEvent;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 
 /**
  * Class that creates a menubar. 

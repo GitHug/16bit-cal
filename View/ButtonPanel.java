@@ -1,10 +1,10 @@
 
 package View;
+
 import Control.Actions.Action;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import javax.swing.JButton;
-import javax.swing.JPanel;
+
+import javax.swing.*;
+import java.awt.*;
 
 
 

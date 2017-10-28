@@ -10,7 +10,8 @@ import Model.Database.ResourceHandler;
 import Model.Datatypes.Instruction;
 import Model.SixteenBitModel;
 import Utils.OsUtils;
-import java.awt.*;
+
+import javax.swing.event.MouseInputAdapter;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -19,8 +20,6 @@ import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
-import javax.swing.*;
-import javax.swing.event.MouseInputAdapter;
 
 /**
  * Class for creating a panel used as a glass pane. 

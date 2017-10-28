@@ -3,13 +3,12 @@ package Control;
 import Model.SixteenBitModel;
 import View.MenuBar;
 import View.MyGlassPane;
+
+import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JFrame;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 
 
 /**

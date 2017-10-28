@@ -5,7 +5,7 @@
 
 package Control.Actions;
 
-import java.awt.Color;
+import java.awt.*;
 
 /**
  * Event class that notifies components that they should be updated.

@@ -4,8 +4,7 @@
  */
 package Control.Interface;
 
-import java.awt.Graphics;
-import java.awt.Point;
+import java.awt.*;
 
 /**
  * An interface for drawing stuff. 

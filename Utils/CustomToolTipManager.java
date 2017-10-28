@@ -16,9 +16,6 @@ package Utils;
 
 
 import Model.SixteenBitModel;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
 
 /**
  * Manages tooltips for Shrimp. <br>

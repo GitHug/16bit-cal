@@ -6,7 +6,7 @@ import Control.Actions.SelectedEvent;
 import Control.Actions.UpdateEvent;
 import Model.Datatypes.BorderImage;
 import Model.SixteenBitModel;
-import java.awt.*;
+
 import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
 

@@ -3,12 +3,10 @@ package Control;
 import Control.Interface.Drawable;
 import Model.SixteenBitModel;
 import View.CustomComponent;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Point;
-import java.awt.event.*;
+
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
-import javax.swing.JPanel;
 
 /**
  * Empty panel that is used to draw components on. 
