@@ -44,7 +44,7 @@ public class AboutWindow extends JFrame {
         
        
         paneAdd.setLayout(new GridBagLayout());
-	GridBagConstraints c = new GridBagConstraints();
+	    GridBagConstraints c = new GridBagConstraints();
         c.weightx = 0.5;
         c.weighty = 0.5;    
         c.fill = GridBagConstraints.HORIZONTAL;
