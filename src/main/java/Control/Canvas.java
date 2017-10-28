@@ -6,6 +6,7 @@ import View.CustomComponent;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 import java.util.ArrayList;
 
 /**
@@ -232,7 +233,7 @@ public class Canvas extends JPanel {
      * A custom Event Listener that listens to changes in the Canvas
      * like resize of the window for example.
      */
-    public class CanvasEventListener extends ComponentAdapter{
+    public class CanvasEventListener extends ComponentAdapter {
         private Canvas canvas;
         
         /**
