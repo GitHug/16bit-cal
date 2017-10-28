@@ -131,6 +131,7 @@ public class ImageBorder extends AbstractBorder {
         catch(Exception ex){
             System.out.println(debug);
             System.err.println(ex);
+            ex.printStackTrace();
             System.exit(0);
         }
     }
