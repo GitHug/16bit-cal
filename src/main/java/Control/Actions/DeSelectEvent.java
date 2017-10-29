@@ -9,7 +9,7 @@ package Control.Actions;
  * Simple event class used to deselect components.
  * @author fredrikmakila
  */
-public class DeSelectEvent {
+public class DeSelectEvent implements CalendarEvent {
     private final int id;
 
     /**

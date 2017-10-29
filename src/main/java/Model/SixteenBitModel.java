@@ -24,6 +24,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.List;
 
 /**
  * A singleton Class that acts as the model of the Calendar. This class should
@@ -34,33 +35,11 @@ import java.util.logging.Logger;
  * @author Robin Horneman
  */
 public class SixteenBitModel extends CalendarMethods {
-    //<---------public variables------------
-    /**
-     * The value for a month view
-     */
-    public static final int MONTHVIEW = 0;
-    /**
-     * The value for a week view
-     */
-    public static final int WEEKVIEW = 1;
-    /**
-     * The value for a day view
-     */
-    public static final int DAYVIEW = 2;
-    //---------public variables------------>
-    
     //<---------private variables------------
     //The xml input/output class that is used.
     private XMLInputOutput xmlhandler; 
     //The instance for this model.
     private static SixteenBitModel instance = null;
-    //The current view
-    private int currentView = MONTHVIEW;
-    //The week view model
-    private WeekViewModel weekviewmodel = new WeekViewModel();
-    //The width and height of the canvas.
-    private int canvasSizeWidth = 964;
-    private int canvasSizeHeight = 559;
     //The id of the selected DayCard
     private int id;
     //The current month
@@ -70,41 +49,37 @@ public class SixteenBitModel extends CalendarMethods {
     //The id of the first daycard created
 
     //A list containing all the available months
-    private CircularArrayList<String> allMonths = new CircularArrayList<String>("January", "February",
+    private final CircularArrayList<String> allMonths = new CircularArrayList<>("January", "February",
             "March", "April", "May", "June", "July", "August", "September", "October",
             "November", "December");
-    //Lists of things that is supposed to show up in the differen Views
-    private ArrayList<Integer> days;
-    private ArrayList<Integer> weeks;
+    //Lists of things that is supposed to show up in the different Views
     //Lists of events and tasks for a view
-    private ArrayList<EventObject> events;
-    private ArrayList<TaskObject> tasks;
+    private List<EventObject> events;
+    private List<TaskObject> tasks;
     //Lists of ALL events and tasks
-    private ArrayList<EventObject> allEvents;
-    private ArrayList<TaskObject> allTasks;
+    private List<EventObject> allEvents;
+    private List<TaskObject> allTasks;
     //List of userdefined categories
-    private ArrayList<CategoryObject> userCategories;
+    private List<CategoryObject> userCategories;
     //Paintlist list of drawables that are going to be drawn
-    private ArrayList<Drawable> paintList = new ArrayList<Drawable>();
+    private final ArrayList<Drawable> paintList = new ArrayList<>();
     //Different observables for sending different events.
-    private Observable<SelectedEvent> selectedObservable = new ObservableImplementation<SelectedEvent>();
-    private Observable<UpdateEvent> updateObservable = new ObservableImplementation<UpdateEvent>();
-    private Observable<DeSelectEvent> deSelectedObservable = new ObservableImplementation<DeSelectEvent>();
-    private Observable<AnimationEvent> animationObservable = new ObservableImplementation<AnimationEvent>();
+    private final Observable<CalendarEvent> selectedObservable = new ObservableImplementation<>();
+    private final Observable<CalendarEvent> updateObservable = new ObservableImplementation<>();
+    private final Observable<CalendarEvent> deSelectedObservable = new ObservableImplementation<>();
+    private final Observable<CalendarEvent> animationObservable = new ObservableImplementation<>();
     //The undo/redo manager
-    private UndoRedoManager undoredomanager = new UndoRedoManager();
+    private final UndoRedoManager undoredomanager = new UndoRedoManager();
     //The glass pane
     private MyGlassPane myGlassPane;
-    //A List of DayCards with their associated tasks and events
-    private ArrayList<CardStuffList> dayCardList;
     //A datatype for storing the daycards and their tasks and events.
     private DayCardIdentifiers dcId = new DayCardIdentifiers();
     //The animation engine
     private AnimationEngine animationEngine;
     //List containing all the daycards
-    private ArrayList<DayCard> dcList = new ArrayList<DayCard>();
+    private ArrayList<DayCard> dcList = new ArrayList<>();
     //List containing the checkboxes
-    private ArrayList<Checkbox> checkBoxList = new ArrayList<Checkbox>();
+    private final ArrayList<Checkbox> checkBoxList = new ArrayList<>();
     //The canvas for this application
     private Canvas canvas;
     //The menu bar for this application
@@ -121,7 +96,7 @@ public class SixteenBitModel extends CalendarMethods {
      * The Standard constructor. Not able to be called from outside the class,
      * to ensure that the singleton property holds.
      */
-    protected SixteenBitModel() {
+    private SixteenBitModel() {
     }
     //---------constructor------------>
 
@@ -157,15 +132,13 @@ public class SixteenBitModel extends CalendarMethods {
         //Updates the list of daycards
         for(int i = 0; i < dcId.getDayCardStuffList().size(); i++) {
             Date date = dcId.getDayCardStuffList().get(i).getDate();
-            for(int j = 0; j < tasks.size(); j++) {
-                TaskObject t = tasks.get(j);
+            for (TaskObject t : tasks) {
                 Date taskDate = t.getDate();
-                if(taskDate.equals(date)) {
+                if (taskDate.equals(date)) {
                     System.out.println(t.toString() + " ADDED AT POS " + i);
                     dcId.getDayCardStuffList().get(i).addTask(t);
                 }
-                else; //dcId.getDayCardStuffList().get(i).setEmpty();
-                }
+            }
             } 
     
     }
@@ -178,14 +151,14 @@ public class SixteenBitModel extends CalendarMethods {
      */
     public ArrayList<EventObject> getThisMonthEvents() {
         int month;
-        ArrayList<EventObject> monthevents = new ArrayList<EventObject>();
+        ArrayList<EventObject> monthevents = new ArrayList<>();
         Calendar cal = Calendar.getInstance();
         if (events != null) {
-            for (int i = 0; i < events.size(); i++) {
-                cal.setTime(events.get(i).getStartDate());
+            for (EventObject event : events) {
+                cal.setTime(event.getStartDate());
                 month = cal.get(Calendar.MONTH);
                 if (month == currentMonth) {
-                    monthevents.add(events.get(i));
+                    monthevents.add(event);
                 }
             }
         }
@@ -200,27 +173,18 @@ public class SixteenBitModel extends CalendarMethods {
      */
     public ArrayList<TaskObject> getThisMonthTasks() {
         int month;
-        ArrayList<TaskObject> monthtasks = new ArrayList<TaskObject>();
+        ArrayList<TaskObject> monthtasks = new ArrayList<>();
         Calendar cal = Calendar.getInstance();
         if (tasks != null) {
-            for (int i = 0; i < tasks.size(); i++) {
-                cal.setTime(tasks.get(i).getDate());
+            for (TaskObject task : tasks) {
+                cal.setTime(task.getDate());
                 month = cal.get(Calendar.MONTH);
                 if (month == currentMonth) {
-                    monthtasks.add(tasks.get(i));
+                    monthtasks.add(task);
                 }
             }
         }
         return monthtasks;
-    }
-    
-    /**
-     * Gets the canvas size
-     *
-     * @return The canvas dimensions
-     */
-    public Dimension getCanvasSize() {
-        return new Dimension(canvasSizeWidth, canvasSizeHeight);
     }
     
     /**
@@ -236,21 +200,13 @@ public class SixteenBitModel extends CalendarMethods {
     public int getMonth() {
         return currentMonth;
     }
-    
-    /**
-     * Returns the WeekViewModel from this SixteenBitModel
-     * @return 
-     */
-    public WeekViewModel getWeekModel() {
-        return weekviewmodel;
-    }
 
     /**
      * Gets all the tasks in the model.
      *
      * @return All the tasks in the model
      */
-    public ArrayList<TaskObject> getTasks() {
+    public List<TaskObject> getTasks() {
         return tasks;
     }
 
@@ -259,7 +215,7 @@ public class SixteenBitModel extends CalendarMethods {
      *
      * @return All the events in the model
      */
-    public ArrayList<EventObject> getEvents() {
+    public List<EventObject> getEvents() {
         return events;
     }
     
@@ -346,16 +302,6 @@ public class SixteenBitModel extends CalendarMethods {
     //---------getters------------>
     
     //<---------setters------------
-    
-    /**
-     * Sets the canvas size.
-     *
-     * @param dim the new dimension of the canvas
-     */
-    public void setCanvasSize(Dimension dim) {
-        canvasSizeWidth = dim.width;
-        canvasSizeHeight = dim.height;
-    }
 
     /**
      * Notifies observers that listen to selected events of an selected event.
@@ -380,23 +326,15 @@ public class SixteenBitModel extends CalendarMethods {
      * Sets the current set of tasks 
      * @param tasks the new set of tasks 
      */
-    public void setTasks(ArrayList<TaskObject> tasks){
+    public void setTasks(List<TaskObject> tasks){
         this.tasks = tasks;
-    }
-    
-    /**
-     * Sets the current set of events 
-     * @param events the new set of events 
-     */
-    public void setEvents(ArrayList<EventObject> events){
-        this.events = events;
     }
     
     /**
      * Sets the current set of ALL tasks 
      * @param tasks the new set of tasks 
      */
-    public void setTasksAll(ArrayList<TaskObject> tasks){
+    public void setTasksAll(List<TaskObject> tasks){
         this.allTasks = tasks;
     }
     
@@ -404,7 +342,7 @@ public class SixteenBitModel extends CalendarMethods {
      * Sets the current set of ALL events 
      * @param events the new set of events 
      */
-    public void setEventsAll(ArrayList<EventObject> events){
+    public void setEventsAll(List<EventObject> events){
         this.allEvents = events;
     }
     
@@ -433,17 +371,8 @@ public class SixteenBitModel extends CalendarMethods {
      * @param myGlassPane The glasspane for this application
      */
     public void setGlassPane(MyGlassPane myGlassPane) {
-        MyGlassPane glassPane = myGlassPane;
-        glassPane.setVisible(true);
-        this.myGlassPane = glassPane;
-    }
-    
-    /**
-     * Sets which CardStuffList to use 
-     * @param csl the CardStuffList to use
-     */
-    public void setDayCardStuffList(ArrayList<CardStuffList> csl) {
-        dayCardList = csl;
+        myGlassPane.setVisible(true);
+        this.myGlassPane = myGlassPane;
     }
     
     /**
@@ -522,7 +451,7 @@ public class SixteenBitModel extends CalendarMethods {
      *
      * @return a selected event observable registrator.
      */
-    public ObservableRegistration<SelectedEvent> selectedObservableRegistration() {
+    public ObservableRegistration<CalendarEvent> selectedObservableRegistration() {
         return this.selectedObservable;
     }
 
@@ -532,7 +461,7 @@ public class SixteenBitModel extends CalendarMethods {
      *
      * @return a deselect event observable registrator.
      */
-    public ObservableRegistration<DeSelectEvent> deSelectedObservableRegistration() {
+    public ObservableRegistration<CalendarEvent> deSelectedObservableRegistration() {
         return this.deSelectedObservable;
     }
 
@@ -542,7 +471,7 @@ public class SixteenBitModel extends CalendarMethods {
      *
      * @return an update event observable registrator.
      */
-    public ObservableRegistration<UpdateEvent> updateObservableRegistration() {
+    public ObservableRegistration<CalendarEvent> updateObservableRegistration() {
         return this.updateObservable;
     }
     
@@ -551,7 +480,7 @@ public class SixteenBitModel extends CalendarMethods {
      * register to listen to animation events.
      * @return An animation event observable registrator
      */
-    public ObservableRegistration<AnimationEvent> animationObservableRegistration() {
+    public ObservableRegistration<CalendarEvent> animationObservableRegistration() {
         return this.animationObservable;
     }
 
@@ -573,7 +502,7 @@ public class SixteenBitModel extends CalendarMethods {
         int index;
         int updateId;
         int day = 0;
-        ArrayList<UpdateEvent> list = new ArrayList<UpdateEvent>();
+        ArrayList<UpdateEvent> list = new ArrayList<>();
         CircularArrayList tempMonths = new CircularArrayList();
         UpdateEvent event;
         int weekNumber;
@@ -702,8 +631,8 @@ public class SixteenBitModel extends CalendarMethods {
         animationEngine.stopAnimatePrio();
 
         //Notifies the observers
-        for (int i = 0; i < list.size(); i++) {
-            this.updateObservable.notifyObservers(list.get(i));
+        for (UpdateEvent aList : list) {
+            this.updateObservable.notifyObservers(aList);
         }
         
     }
@@ -716,7 +645,7 @@ public class SixteenBitModel extends CalendarMethods {
      */
     public void addTask(TaskObject task) {
         if (tasks == null) {
-            tasks = new ArrayList<TaskObject>();
+            tasks = new ArrayList<>();
         }
         tasks.add(task);
         undoredomanager.addUndoRedo(task);
@@ -737,7 +666,7 @@ public class SixteenBitModel extends CalendarMethods {
      */
     public void addEvent(EventObject event) {
         if (events == null) {
-            events = new ArrayList<EventObject>();
+            events = new ArrayList<>();
         }
         events.add(event);
         undoredomanager.addUndoRedo(event);
@@ -758,7 +687,7 @@ public class SixteenBitModel extends CalendarMethods {
      */
     public void addTaskRedo(TaskObject task) {
         if (tasks == null) {
-            tasks = new ArrayList<TaskObject>();
+            tasks = new ArrayList<>();
         }
         tasks.add(task);
     }
@@ -770,7 +699,7 @@ public class SixteenBitModel extends CalendarMethods {
      */
     public void addEventRedo(EventObject event) {
         if (events == null) {
-            events = new ArrayList<EventObject>();
+            events = new ArrayList<>();
         }
         events.add(event);
     }
@@ -801,25 +730,6 @@ public class SixteenBitModel extends CalendarMethods {
         userCategories.add(co);
     }
 
-    /**
-     * Removes a task from the models list of tasks and asking for undo
-     *
-     * @param task task to be removed
-     */
-    public void removeTaskUndoable(TaskObject task) {
-        tasks.remove(task);
-        undoredomanager.addUndoRedo(new DeletedTask(task));
-    }
-
-    /**
-     * Removes an event from the models list of events and asking for undo
-     *
-     * @param event event to be removed
-     */
-    public void removeEventUndoable(EventObject event) {
-        events.remove(event);
-        undoredomanager.addUndoRedo(new DeletedEvent(event));
-    }
 
     /**
      * Method that undo the latest action.
@@ -848,12 +758,6 @@ public class SixteenBitModel extends CalendarMethods {
         paintList.add(d);
     }
 
-    /**
-     * Clears the painList.
-     */
-    public void clearPaintList() {
-        paintList.clear();
-    }
     
     /**
      * Adds tasks or events to a day card. If there are no
@@ -863,7 +767,7 @@ public class SixteenBitModel extends CalendarMethods {
      * @param day The current date
      * @param dayCardId The ID of the daycard
      */
-    public void updateDayCard(int year, int month, int day, int dayCardId) {
+    private void updateDayCard(int year, int month, int day, int dayCardId) {
         String yearString = ""+year;
         String monthString = ""+(month + 1);
         String dayString = ""+day;
@@ -893,13 +797,11 @@ public class SixteenBitModel extends CalendarMethods {
             if(dcId.getDayCardStuffList().get(i).getDayCardId() == dayCardId) {
                 dcId.getDayCardStuffList().get(i).setDate(date);
                 //Check the date with that of the tasks
-                for(int j = 0; j < tasks.size(); j++) {
-                    TaskObject t = tasks.get(j);
+                for (TaskObject t : tasks) {
                     Date taskDate = t.getDate();
-                    if(date.equals(taskDate)) {
+                    if (taskDate.equals(date)) {
                         dcId.getDayCardStuffList().get(i).addTask(t);
-                    }
-                    else dcId.getDayCardStuffList().get(i).setEmpty();
+                    } else dcId.getDayCardStuffList().get(i).setEmpty();
                 }
                 break;
             }
@@ -911,10 +813,10 @@ public class SixteenBitModel extends CalendarMethods {
      * animation observable.
      * @param events A list of events to be dispatched
      */
-    public void animateDayCard(ArrayList<AnimationEvent> events) {
+    public void animateDayCard(List<AnimationEvent> events) {
         //Notifies the observers
-        for (int i = 0; i < events.size(); i++) {
-            this.animationObservable.notifyObservers(events.get(i));
+        for (AnimationEvent event : events) {
+            this.animationObservable.notifyObservers(event);
         }
     }
     
@@ -922,16 +824,14 @@ public class SixteenBitModel extends CalendarMethods {
      * Dispatches an animation event to the observers that is listening to animation 
      * observable.
      * @param dayCardId The ID of the daycard that will be notified
-     * @param state The state of the animation. True for start, false for stop.
      * @param alpha An alpha value.
      */
-    public void animateDayCard(int dayCardId, boolean state, int alpha) {
-        AnimationEvent event = new AnimationEvent(dayCardId, state, null);
+    public void animateDayCard(int dayCardId, int alpha) {
+        AnimationEvent event = new AnimationEvent(dayCardId);
         event.setColor(new Color(255, 255, 255, alpha));
         this.animationObservable.notifyObservers(event);
     }
-    
-    /************************SAVER********************************************/
+
     /**
      * Saves the content of the Model in the XML file
      * (events, tasks and categories)
@@ -939,30 +839,30 @@ public class SixteenBitModel extends CalendarMethods {
     public void saveModelXML(){
         //Add new tasks and events to the list of ALL tasks and events
         //removing duplicates
-        for(int i=0;i<tasks.size();i++){
-            boolean shouldadd = true;
-            for(int j=0;j<allTasks.size();j++){
-                if(tasks.get(i).toString().equals(allTasks.get(j).toString())){
-                    shouldadd = false;
+        for (TaskObject task : tasks) {
+            boolean shouldAdd = true;
+            for (TaskObject allTask : allTasks) {
+                if (task.toString().equals(allTask.toString())) {
+                    shouldAdd = false;
                 }
             }
-            if(shouldadd){
-               //Add to the XML-file
-               allTasks.add(tasks.get(i));
-               xmlhandler.put(tasks.get(i));
+            if (shouldAdd) {
+                //Add to the XML-file
+                allTasks.add(task);
+                xmlhandler.put(task);
             }
         }
-        for(int i=0;i<events.size();i++){
+        for (EventObject event : events) {
             boolean shouldadd = true;
-            for(int j=0;j<allEvents.size();j++){
-                if(events.get(i).toString().equals(allEvents.get(j).toString())){
+            for (EventObject allEvent : allEvents) {
+                if (event.toString().equals(allEvent.toString())) {
                     shouldadd = false;
                 }
             }
-            if(shouldadd){
-               //Add to the XML-file
-               allEvents.add(events.get(i));
-               xmlhandler.put(events.get(i));
+            if (shouldadd) {
+                //Add to the XML-file
+                allEvents.add(event);
+                xmlhandler.put(event);
             }
         }
         
@@ -974,9 +874,8 @@ public class SixteenBitModel extends CalendarMethods {
      */
     public void deSelectCheckBoxes() {
         //Deselects the checkboxes
-        for(int i = 0; i < checkBoxList.size(); i++) {
-            Checkbox check = checkBoxList.get(i);
-            if(check.getSelected()) {
+        for (Checkbox check : checkBoxList) {
+            if (check.getSelected()) {
                 this.deSelectedObservable.notifyObservers(new DeSelectEvent(check.getId()));
             }
         }

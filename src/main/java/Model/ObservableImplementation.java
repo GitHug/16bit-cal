@@ -19,21 +19,11 @@ import java.util.List;
 public class ObservableImplementation<T> implements Observable<T>{
 
     //list of all the observers.
-    private final List<Observer<T>> observers = new ArrayList<Observer<T>>();
+    private final List<Observer<T>> observers = new ArrayList<>();
 
     @Override
     public void addObserver(Observer<T> o) {
         this.observers.add(o);
-    }
-
-    @Override
-    public void removeObserver(Observer<T> o) {
-        this.observers.remove(o);
-    }
-
-    @Override
-    public void removeAllObservers() {
-        this.observers.clear();     
     }
 
     @Override

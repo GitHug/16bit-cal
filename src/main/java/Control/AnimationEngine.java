@@ -18,6 +18,9 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.List;
+
+import static Model.Datatypes.Priority.LOW;
 
 /**
  * This class handles all the animations that occur in this application. It uses
@@ -31,38 +34,30 @@ public class AnimationEngine {
     private final SixteenBitModel model;
     //The glass pane
     private MyGlassPane myGlassPane;
-    //The timer used for the animations
-    private Timer timer;
-    //The animation timer task class
-    private Animation graphicAnimation;
     //The alpha value used for flashing a daycard when hovering on it
     private int alpha = 0;
     //The color for a daycard containing a low priority task
-    private Color lowP = new Color(0, 255, 0); //Green
+    private final Color lowP = new Color(0, 255, 0); //Green
     //The color for a daycard containing a low priority task
-    private Color normalP = new Color(50, 100, 255); //Blue
+    private final Color normalP = new Color(50, 100, 255); //Blue
     //The color for a daycard containing a low priority task
-    private Color highP = new Color(255, 0, 100); //Red
+    private final Color highP = new Color(255, 0, 100); //Red
     //A variable that tells the animation task to make a daycard flash by changin its alpha value
     private boolean pulsating = false;
     //A boolean that stops or starts the animation of flashing tasks
     private boolean pulseComponents = false;
     //Lists that contains the id for daycards with low, normal or high priority tasks respectively
-    private ArrayList<Integer> componentPrioLow = new ArrayList<Integer>();
-    private ArrayList<Integer> componentPrioNormal = new ArrayList<Integer>();
-    private ArrayList<Integer> componentPrioHigh = new ArrayList<Integer>();
+    private final ArrayList<Integer> componentPrioLow = new ArrayList<>();
+    private final ArrayList<Integer> componentPrioNormal = new ArrayList<>();
+    private final ArrayList<Integer> componentPrioHigh = new ArrayList<>();
     //Lists that contains the events for low, normal or high priority tasks
-    private ArrayList<AnimationEvent> eventListLow = new ArrayList<AnimationEvent>();
-    private ArrayList<AnimationEvent> eventListNormal = new ArrayList<AnimationEvent>();
-    private ArrayList<AnimationEvent> eventListHigh = new ArrayList<AnimationEvent>();
+    private final ArrayList<AnimationEvent> eventListLow = new ArrayList<>();
+    private final ArrayList<AnimationEvent> eventListNormal = new ArrayList<>();
+    private final ArrayList<AnimationEvent> eventListHigh = new ArrayList<>();
     //The id of the daycard that the mouse is hovered on
     private int id;
     //A list containing all the daycards
     private ArrayList<DayCard> dayCardList;
-    //Just a general color variable that might be nice to have
-    private Color color;
-    //The offset for the alpha value in each itereation of the animation timer task class for a daycard that the mouse is hovered on
-    private int offset = 5;
     //This tells if the offset should be positive or negative.
     private int increase = 1;
     //This does the same for the low priorities
@@ -89,8 +84,6 @@ public class AnimationEngine {
     private boolean runInstructions = false;
     //Counter for instructions
     private int counter = 0;
-    //The canvas
-    private Canvas canvas;
 
     /**
      * Only constructor for this class. Starts the timer and schedule the
@@ -101,10 +94,9 @@ public class AnimationEngine {
     public AnimationEngine() {
         model = SixteenBitModel.getInstance();
         myGlassPane = model.getGlassPane();
-        graphicAnimation = new Animation();
+        Animation graphicAnimation = new Animation();
         //Init timer
-        timer = new Timer();
-        canvas = model.getCanvas();
+        Timer timer = new Timer();
         //Schedule animation task
         RepainterAction repainterAction = new RepainterAction();
         timer.schedule(graphicAnimation, 0, //initial delay
@@ -124,10 +116,10 @@ public class AnimationEngine {
         this.id = id;
         //If the daycard is not already pulsating
         if (!pulsating) {
-            for (int i = 0; i < dayCardList.size(); i++) {
+            for (DayCard aDayCardList : dayCardList) {
                 //gets the correct daycard
-                if (dayCardList.get(i).getId() == id) {
-                    animateComponent = dayCardList.get(i);
+                if (aDayCardList.getId() == id) {
+                    animateComponent = aDayCardList;
                     break;
                 }
             }
@@ -154,9 +146,8 @@ public class AnimationEngine {
      * Stops the help system. Makes sure no more instructions are processed in
      * the scheduled timer task and resets the counter
      *
-     * @param help The help system for this application.
      */
-    public void stop(HelpSystem help) {
+    public void stopHelpSystem() {
         runInstructions = false;
         counter = 0;
     }
@@ -178,7 +169,7 @@ public class AnimationEngine {
     public void stop() {
         pulsating = false;
         alpha = 0;
-        model.animateDayCard(id, false, alpha);
+        model.animateDayCard(id, alpha);
     }
 
     /**
@@ -198,21 +189,22 @@ public class AnimationEngine {
         if (ids.size() > 0) {
             AnimationEvent event;
             //checks the priority
-            if (prio.equals(Priority.LOW)) {
+            Color color;
+            if (prio.equals(LOW)) {
                 //Sets the color to the low priority color
                 color = lowP;
                 //Adds all identifiers to the low priority component list, which will be empty anyway from the start
                 componentPrioLow.addAll(ids);
                 //iterates through the identifier list
-                for (int i = 0; i < componentPrioLow.size(); i++) {
+                for (Integer aComponentPrioLow : componentPrioLow) {
                     //creates the animation event
-                    event = new AnimationEvent(componentPrioLow.get(i), true, prio);
+                    event = new AnimationEvent(aComponentPrioLow);
                     //Adds a color to the event
                     event.setColor(color);
                     //Adds the event to the event list so it later can be animatated
                     eventListLow.add(event);
                     //Adds the daycards to the repaint list for low priorities so it can be repainted
-                   
+
                 }
                 //Indicates that the low priority is currently running
                 currentlyRunningPriorityLow = true;
@@ -221,21 +213,21 @@ public class AnimationEngine {
             } else if (prio.equals(Priority.NORMAL)) {
                 color = normalP;
                 componentPrioNormal.addAll(ids);
-                for (int i = 0; i < componentPrioNormal.size(); i++) {
-                    event = new AnimationEvent(componentPrioNormal.get(i), true, prio);
+                for (Integer aComponentPrioNormal : componentPrioNormal) {
+                    event = new AnimationEvent(aComponentPrioNormal);
                     event.setColor(color);
                     eventListNormal.add(event);
-                    
+
                 }
                 currentlyRunningPriorityNormal = true;
             } else {
                 color = highP;
                 componentPrioHigh.addAll(ids);
-                for (int i = 0; i < componentPrioHigh.size(); i++) {
-                    event = new AnimationEvent(componentPrioHigh.get(i), true, prio);
+                for (Integer aComponentPrioHigh : componentPrioHigh) {
+                    event = new AnimationEvent(aComponentPrioHigh);
                     event.setColor(color);
                     eventListHigh.add(event);
-                    
+
                 }
                 currentlyRunningPriorityHigh = true;
 
@@ -257,14 +249,14 @@ public class AnimationEngine {
         currentlyRunningPriorityNormal = false;
         currentlyRunningPriorityHigh = false;
         //Tells daycards to reset so the they return to their default color again
-        for (int i = 0; i < componentPrioLow.size(); i++) {
-            model.animateDayCard(componentPrioLow.get(i), false, alphaValue);
+        for (Integer aComponentPrioLow : componentPrioLow) {
+            model.animateDayCard(aComponentPrioLow, alphaValue);
         }
-        for (int i = 0; i < componentPrioNormal.size(); i++) {
-            model.animateDayCard(componentPrioNormal.get(i), false, alphaValue);
+        for (Integer aComponentPrioNormal : componentPrioNormal) {
+            model.animateDayCard(aComponentPrioNormal, alphaValue);
         }
-        for (int i = 0; i < componentPrioHigh.size(); i++) {
-            model.animateDayCard(componentPrioHigh.get(i), false, alphaValue);
+        for (Integer aComponentPrioHigh : componentPrioHigh) {
+            model.animateDayCard(aComponentPrioHigh, alphaValue);
         }
 
         componentPrioLow.clear();
@@ -294,17 +286,9 @@ public class AnimationEngine {
         //A reset alpha value
         int alphaValue = 0;
         //Checks the priority and if it's currently running
-        if (prio.equals(Priority.LOW) && currentlyRunningPriorityLow) {
-            //Indicates that the low priority animation is no longer running
-            currentlyRunningPriorityLow = false;
-            //Tells the animated daycards to return to their default color
-            for (int i = 0; i < componentPrioLow.size(); i++) {
-                model.animateDayCard(componentPrioLow.get(i), false, alphaValue);
-            }
-            //Resets the id list containing the low priorities
-            componentPrioLow.clear();
-            //Resets the event list
-            eventListLow.clear();
+        if (prio.equals(LOW) && currentlyRunningPriorityLow) {
+            handlePriority(prio, componentPrioLow, alphaValue, eventListLow);
+
             //Resets the alpha value for low priorities
             alphaLow = 0;
             //Resets the increase value for low priorities
@@ -312,22 +296,14 @@ public class AnimationEngine {
         }
         //For inline comments check above. It's basically the same thing all over again.
         if (prio.equals(Priority.NORMAL) && currentlyRunningPriorityNormal) {
-            currentlyRunningPriorityNormal = false;
-            for (int i = 0; i < componentPrioNormal.size(); i++) {
-                model.animateDayCard(componentPrioNormal.get(i), false, alphaValue);
-            }
-            componentPrioNormal.clear();
-            eventListNormal.clear();
+            handlePriority(prio, componentPrioNormal, alphaValue, eventListNormal);
+
             alphaNormal = 0;
             increaseNormal = 1;
         }
         if (prio.equals(Priority.HIGH) && currentlyRunningPriorityHigh) {
-            currentlyRunningPriorityHigh = false;
-            for (int i = 0; i < componentPrioHigh.size(); i++) {
-                model.animateDayCard(componentPrioHigh.get(i), false, alphaValue);
-            }
-            componentPrioHigh.clear();
-            eventListHigh.clear();
+            handlePriority(prio, componentPrioHigh, alphaValue, eventListHigh);
+
             alphaHigh = 0;
             increaseHigh = 1;
         }
@@ -336,7 +312,29 @@ public class AnimationEngine {
         if (!currentlyRunningPriorityLow && !currentlyRunningPriorityNormal && !currentlyRunningPriorityHigh) {
             pulseComponents = false;
         }
+    }
 
+    private void handlePriority(Priority priority, List<Integer> components, int alphaValue, List<AnimationEvent> eventList) {
+        switch (priority.toString()) {
+            case "low":
+                currentlyRunningPriorityLow = false;
+                break;
+            case "normal":
+                currentlyRunningPriorityNormal = false;
+                break;
+            case "high":
+                currentlyRunningPriorityHigh = false;
+                break;
+            default:
+                return; //No match
+        }
+
+        for (Integer component : components) {
+            model.animateDayCard(component, alphaValue);
+        }
+
+        components.clear();
+        eventList.clear();
     }
 
     /**
@@ -344,7 +342,7 @@ public class AnimationEngine {
      * missleading but this is a way for the animation engine to get access to
      * the glasspane
      *
-     * @param myGlassPane
+     * @param myGlassPane glass pane
      */
     public void setGlassPane(MyGlassPane myGlassPane) {
         this.myGlassPane = myGlassPane;
@@ -355,10 +353,6 @@ public class AnimationEngine {
      */
     private class Animation extends TimerTask {
 
-        //The dimension of the components
-        private Dimension d;
-        //The location of the components.
-        private Point p;
         //The color for the daycard
         private Color dcColor;
 
@@ -370,6 +364,7 @@ public class AnimationEngine {
 
 
             //Checks if the component should pulsate due to the mouse being over it or not
+            int offset = 5;
             if (pulsating && animateComponent != null) {
                 //Changes the alpha value. The alpha value will go increase with a certain offset
                 //each time. When the alpha value reaches 255, it will start to decrease with the same offset
@@ -380,58 +375,35 @@ public class AnimationEngine {
                 //Change the actual alpha value
                 alpha = alpha + offset * increase;
                 //Change the color of the daycard by changing its alpha value
-                model.animateDayCard(id, true, alpha);
+                model.animateDayCard(id, alpha);
                 //Gets the drawing area of the daycard
-                p = animateComponent.getOffsetLocation();
+                animateComponent.getOffsetLocation();
                 //Gets the size
-                d = animateComponent.getSize();
+                animateComponent.getSize();
                 //Repaint the daycard
             }
 
             if (pulseComponents) {
                 //Animate daycards with low priority tasks
                 if (currentlyRunningPriorityLow) {
-                    //Change the alpha value in a fashion similar to that of the above
-                    if ((alphaLow + offset > 255 && increaseLow > 0) || (alphaLow - offset < 0 && increaseLow < 0)) {
-                        increaseLow = increaseLow * -1;
-                    }
-                    alphaLow = alphaLow + offset * increaseLow;
-                    //Go through the list of low priority events and change their color by adding the new
-                    //alpha value
-                    for (int i = 0; i < eventListLow.size(); i++) {
-                        dcColor = setAlpha(eventListLow.get(i).getColor(), alphaLow);
-                        eventListLow.get(i).setColor(dcColor);
-                    }
-                    //"Send" the list of low priority events to the model so it can despatch them
-                    //to the correct daycards
-                    model.animateDayCard(eventListLow);
-                    //Go through the repaint list and repaint all the daycards with a low priority task
+                    int[] result = animateDayCards(eventListLow, alphaLow, offset, increaseLow);
 
+                    alphaLow = result[0];
+                    increaseLow = result[1];
                 }
                 //For inline comments, please check above. It's basically the same thing that is happening
                 if (currentlyRunningPriorityNormal) {
-                    if ((alphaNormal + offset > 255 && increaseNormal > 0) || (alphaNormal - offset < 0 && increaseNormal < 0)) {
-                        increaseNormal = increaseNormal * -1;
-                    }
-                    alphaNormal = alphaNormal + offset * increaseNormal;
-                    for (int i = 0; i < eventListNormal.size(); i++) {
-                        dcColor = setAlpha(eventListNormal.get(i).getColor(), alphaNormal);
-                        eventListNormal.get(i).setColor(dcColor);
-                    }
-                    model.animateDayCard(eventListNormal);
+                    int[] result = animateDayCards(eventListNormal, alphaNormal, offset, increaseNormal);
+
+                    alphaNormal = result[0];
+                    increaseNormal = result[1];
                 }
                 //For inline comments, please check above. It's basically the same thing that is happening
                 if (currentlyRunningPriorityHigh) {
-                    if ((alphaHigh + offset > 255 && increaseHigh > 0) || (alphaHigh - offset < 0 && increaseHigh < 0)) {
-                        increaseHigh = increaseHigh * -1;
-                    }
-                    alphaHigh = alphaHigh + offset * increaseHigh;
-                    for (int i = 0; i < eventListHigh.size(); i++) {
-                        dcColor = setAlpha(eventListHigh.get(i).getColor(), alphaHigh);
-                        eventListHigh.get(i).setColor(dcColor);
-                    }
-                    model.animateDayCard(eventListHigh);
+                    int result[] = animateDayCards(eventListHigh, alphaHigh, offset, increaseHigh);
 
+                    alphaHigh = result[0];
+                    increaseHigh = result[1];
                 }
             }
             //Passes instructions to glasspane
@@ -448,7 +420,29 @@ public class AnimationEngine {
                 counter++;
             }
         }
+
+        private int[] animateDayCards(List<AnimationEvent> eventList, int alpha, int offset, int increase) {
+
+            if ((alpha + offset > 255 && increase > 0) || (alpha - offset < 0 && increase < 0)) {
+                increase = increase * -1;
+            }
+            alpha = alpha + offset * increase;
+
+            //Go through the list of events and change their color by adding the new
+            //alpha value
+            for (AnimationEvent anEventListLow : eventList) {
+                dcColor = setAlpha(anEventListLow.getColor(), alpha);
+                anEventListLow.setColor(dcColor);
+            }
+            //"Send" the list of events to the model so it can despatch them
+            //to the correct daycards
+            model.animateDayCard(eventList);
+            //Go through the repaint list and repaint all the daycards with priority task
+
+            return new int[]{alpha, increase};
+        }
     }
+
 
     /**
      * Adds a list of daycards to the animation engine. These daycards is

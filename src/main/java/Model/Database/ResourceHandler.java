@@ -8,6 +8,7 @@ package Model.Database;
 import Model.Datatypes.BorderPiece;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
 
@@ -20,7 +21,7 @@ import java.util.prefs.Preferences;
  */
 @SuppressWarnings("unchecked")
 public class ResourceHandler {
-    private ResourceBundle rb;
+    private final ResourceBundle rb;
  
 
     /**
@@ -53,14 +54,14 @@ public class ResourceHandler {
      * @return The URL for the border piece
      */
     
-    public String getBorder(BorderPiece bp, ArrayList<BorderType> bList) {
+    public String getBorder(BorderPiece bp, List<BorderType> bList) {
         BorderType bt;
         String piece = bp.toString();
         String key;
-        for(int i = 0; i < bList.size(); i++) {
-            bt = bList.get(i);
+        for (BorderType aBList : bList) {
+            bt = aBList;
             key = bt.getKey();
-            if(key.contains(piece)) {
+            if (key.contains(piece)) {
                 return bt.getBorder();
             }
         }
@@ -71,15 +72,15 @@ public class ResourceHandler {
      * Simple class that stores a key and a border URL.
      */
     public class BorderType {
-        String key;
-        String border;
+        final String key;
+        final String border;
         
         /**
          * Constructor.
          * @param key The key that holds the border URL.
          * @param border The border URL
          */
-        public BorderType(String key, String border) {
+        BorderType(String key, String border) {
             this.key = key;
             this.border = border;
         }
@@ -88,7 +89,7 @@ public class ResourceHandler {
          * Returns the key for this object
          * @return The key
          */
-        public String getKey() {
+        String getKey() {
             return key;
         }
         
@@ -96,7 +97,7 @@ public class ResourceHandler {
          * Returns the border URL for this object
          * @return The border URL as a string
          */
-        public String getBorder() {
+        String getBorder() {
             return border;
         }
         
@@ -107,15 +108,14 @@ public class ResourceHandler {
      * The name provided is simply that of the border. For example for the 
      * flashy border, the name would be flashy_border. Please consult the 
      * imageResource.properties file for further details on the available borders.
-     * @param borderName The name of the border
+     * @param border The name of the border
      * @return All the different border pieces with the same name as an arraylist
      */
-    public ArrayList getBorders(String borderName) {
-        BorderType bt;
-        ArrayList<BorderType> borders = new ArrayList<BorderType>();
+    public List<BorderType> getBorders(String border) {
 
-        
-        String border = borderName;
+        BorderType bt;
+        List<BorderType> borders = new ArrayList<>();
+
         String top_left = border + "_top_left";
         String top_center = border + "_top_center";
         String top_right = border + "_top_right";

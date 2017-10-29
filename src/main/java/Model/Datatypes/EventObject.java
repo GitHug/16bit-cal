@@ -15,17 +15,17 @@ import java.util.Date;
  */
 
 public class EventObject implements UndoRedo{
-    String name;
-    String info;
-    Date start_date;
-    Date start_time;
-    Date end_date;
-    Date end_time;
-    CategoryObject category;
-    int id;
-    DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-    DateFormat tf = new SimpleDateFormat("HH:mm");
-    private SixteenBitModel model;
+    private final String name;
+    private final String info;
+    private final Date start_date;
+    private final Date start_time;
+    private final Date end_date;
+    private final Date end_time;
+    private final CategoryObject category;
+    private int id;
+    private final DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+    private final DateFormat tf = new SimpleDateFormat("HH:mm");
+    private final SixteenBitModel model;
     
     /**
      * A constructor for this class.
@@ -84,6 +84,7 @@ public class EventObject implements UndoRedo{
     * A type is defined as a String with value "event"
     * @return The type of this object.
     */
+    @SuppressWarnings("SameReturnValue")
     public String getType() {
         return "event";
     }
@@ -105,14 +106,6 @@ public class EventObject implements UndoRedo{
     }
     
     /**
-    * Gets the identifier of the EventObject
-    * @return The id of the EventObject
-    */
-    public int getID() {
-        return id;
-    }
-    
-    /**
      * Gets the start date of the EventObject
      * @return The start date of the EventObject
      */
@@ -127,14 +120,7 @@ public class EventObject implements UndoRedo{
     public String getStartDateAsString() {
         return df.format(start_date);
     }
-    
-    /**
-    * Gets the start time of the EventObject
-    * @return The start time of the EventObject
-    */
-    public Date getStartTime() {
-        return start_time;
-    }
+
     
     /**
     * Gets the start time of the EventObject as a String
@@ -143,14 +129,7 @@ public class EventObject implements UndoRedo{
     public String getStartTimeAsString() {
         return tf.format(start_time);
     }
-    
-    /**
-    * Gets the end date of the EventObject
-    * @return The end date of the EventObject
-    */
-    public Date getEndDate(){
-        return end_date;
-    }
+
     
     /**
     * Gets the end date of the EventObject as a String
@@ -158,14 +137,6 @@ public class EventObject implements UndoRedo{
     */
     public String getEndDateAsString() {
         return df.format(end_date);
-    }
-    
-    /**
-    * Gets the end time of the EventObject
-    * @return The end time of the EventObject
-    */
-    public Date getEndTime() {
-        return end_time;
     }
     
     /**
@@ -178,7 +149,7 @@ public class EventObject implements UndoRedo{
     
     /**
      * Gets the category of the EventObject as a String
-     * @return 
+     * @return category
      */
     
     public CategoryObject getCategory() {

@@ -15,7 +15,7 @@ import java.util.Arrays;
  */
 public class CircularArrayList<T> extends ArrayList {
     private int index = 0;
-    private ArrayList<T> list = new ArrayList<T>();
+    private final ArrayList<T> list = new ArrayList<>();
     
     /**
      * Empty constructor for this class.
@@ -29,6 +29,7 @@ public class CircularArrayList<T> extends ArrayList {
      * to the list.
      * @param o Arbitrary type objects that are added to the list.
      */
+    @SafeVarargs
     public CircularArrayList(T ... o) {
         list.addAll(Arrays.asList(o));
     }
@@ -66,13 +67,7 @@ public class CircularArrayList<T> extends ArrayList {
     public void decrement() {
         decrement(index);
     }
-    
-    /**
-     * Increments the index by 1
-     */
-    public void increment() {
-        increment(index);
-    }
+
     
     /**
      * Returns the size of this circular arraylist.
@@ -114,14 +109,6 @@ public class CircularArrayList<T> extends ArrayList {
     }
     
     /**
-     * Gets the object from the list specified by the index. 
-     * @return An object from the list as specified by the index.
-     */
-    public T getCurrent() {
-        return list.get(index);
-    }
-    
-    /**
      * Gets an object from the list specified by i.
      * @param i The position in the list from where the object should be returned.
      * @return The object at position i in the list.
@@ -129,13 +116,6 @@ public class CircularArrayList<T> extends ArrayList {
     @Override
     public T get(int i) {
         return list.get(i);
-    }
-        
-    /**
-     * Resets the index to position 0.
-     */
-    public void resetIndex() {
-        index = 0;
     }
     
     /**

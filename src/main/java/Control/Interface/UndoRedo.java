@@ -13,11 +13,11 @@ public interface UndoRedo {
     /**
      * Undoes an action
      */
-    public void undo();
+    void undo();
     
     /**
      * Redoes an action
      */
-    public void redo();
+    void redo();
     
 }

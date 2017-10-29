@@ -10,13 +10,12 @@ import java.util.Date;
  */
 public class CardStuffList {
     /******** PRIVATE VARIABLES ******************************************/
-    private int dayCardId;
-    ArrayList<EventObject> events = new ArrayList<EventObject>();
-    ArrayList<TaskObject> tasks = new ArrayList<TaskObject>();
+    private final int dayCardId;
+    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
+    private final ArrayList<EventObject> events = new ArrayList<>();
+    private final ArrayList<TaskObject> tasks = new ArrayList<>();
     private Date date;
-    
-    /******** CONSTRUCTORS ***********************************************/
-    
+
     /**
      * Constructor that creates an empty CardStuffList with given dayCardId attached
      * @param dayCardId the associated dayCardId
@@ -34,32 +33,8 @@ public class CardStuffList {
         this.dayCardId = dayCardId;
         this.date = date;
     }
-    
-    /**
-     * Constructor that creates a CardStuffList with given id and task list
-     * @param daycard the id of the associated dayCardId
-     * @param tasks list of tasks
-     */
-    public CardStuffList(int daycard, ArrayList<TaskObject> tasks) {
-        this.dayCardId = daycard;
-        this.tasks = tasks;
-    } 
-    
-    /**
-     * Constructor that creates a CardStuffList with given id and task list and
-     * event list
-     * @param daycard the id of the associated dayCardId
-     * @param tasks list of tasks in dayCardId
-     * @param events list of events in the dayCardId
-     */
-    public CardStuffList(int daycard, ArrayList<TaskObject> tasks,ArrayList<EventObject> events) {
-        this.dayCardId = daycard;
-        this.tasks = tasks;
-        this.events = events;
-    }
-    
-    /******** GETTERS ****************************************************/
-    
+
+
     /**
      * Returns all tasks associated with this CardStuffList
      * @return tasks of this dayCardId
@@ -67,14 +42,7 @@ public class CardStuffList {
     public ArrayList<TaskObject> getTasks() {
         return tasks;
     }
-    
-    /**
-     * Returns all events associated with this CardStuffList
-     * @return events of this dayCardId
-     */
-    public ArrayList<EventObject> getEvents() {
-        return events;
-    }
+
     
     /**
      * Returns the ID number of this CardStuffList
@@ -91,17 +59,7 @@ public class CardStuffList {
     public Date getDate() {
         return date;
     }
-    
-    /******** SETTERS ****************************************************/
-    
-    /**
-     * Manually sets a new ID to this CardStuffList
-     * @param daycard the new ID for a daycard
-     */
-    public void setDayCard(int daycard) {
-        this.dayCardId = daycard;
-    }
-    
+
     /**
      * Empties all tasks and events associated with this CardStuffList 
      */
@@ -109,22 +67,8 @@ public class CardStuffList {
         tasks.clear();
         events.clear();
     }
-    
-    /**
-     * Sets the list of tasks
-     * @param tasks the new tasklist
-     */
-    public void setTasks(ArrayList<TaskObject> tasks) {
-        this.tasks = tasks;
-    }
-    
-    /**
-     * Sets the list of events
-     * @param events the new eventlist
-     */
-    public void setEvents(ArrayList<EventObject> events) {
-        this.events = events;
-    }
+
+
     
     /**
      * Adds a date to this dayCardId
@@ -133,10 +77,8 @@ public class CardStuffList {
     public void setDate(Date date) {
         this.date = date;
     }
-    
-    
-    /******** OTHERS *****************************************************/
-    
+
+
     /**
      * Adds a task to the list of tasks
      * @param task the task to be added

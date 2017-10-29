@@ -1,10 +1,6 @@
 
 package Model.Datatypes;
 
-/**
- *
- * @author fredrikmakila
- */
 import java.util.Arrays;
 import java.util.List;
 
@@ -14,12 +10,8 @@ import java.util.List;
  */
 public class Complete {
         private String complete = null;
-        String[] completes = {
-            "yes", "no"
-        };
-        List lst = Arrays.asList(completes);
-        
-        /**
+
+    /**
          * Constructor.
          * A task's complete state can have two diferent values: yes or no. 
          * If something else than these two values are the input, then
@@ -28,6 +20,10 @@ public class Complete {
          * @see NotCompleteException
          */
         public Complete(String complete) {
+            String[] completes = {
+                    "yes", "no"
+            };
+            List lst = Arrays.asList(completes);
             if(lst.contains(complete.toLowerCase())) {
                 this.complete = complete;
             }
@@ -36,7 +32,7 @@ public class Complete {
                     throw new NotCompleteException(complete + " is not either yes or no");
                 } 
                 catch (NotCompleteException ex) {
-                    System.err.println(ex);
+                    ex.printStackTrace();
                 }
             }
         }
@@ -55,19 +51,14 @@ public class Complete {
          * If the value is something else than yes or no, then it's considered invalid.
          */
         private class NotCompleteException extends Exception{
-            /**
-             * Empty constructor to be able to cast the exception without a message.
-             */
-            public NotCompleteException() {
-                
-            }
+
             
             /**
              * Constructor that takes a description. 
              * The description can give the user more information on what went wrong
              * @param description A message to be shown
              */
-            public NotCompleteException(String description) {
+            NotCompleteException(String description) {
                 super(description);
             }
         }

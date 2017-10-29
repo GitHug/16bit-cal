@@ -4,6 +4,7 @@
  */
 package View;
 
+import Control.Actions.CalendarEvent;
 import Control.Actions.DeSelectEvent;
 import Control.Actions.SelectedEvent;
 import Model.Database.ResourceHandler;
@@ -22,12 +23,7 @@ import java.net.URL;
 public class BitButton extends CustomComponent {
 
     private String text;
-    private Point p;
-    private Dimension d;
     private Color currentColor;
-    private String imgName;
-    private String url;
-    private URL imageURL;
     private Image img;
     private Image selectedImg;
     private boolean drawImgButton = false;
@@ -50,8 +46,7 @@ public class BitButton extends CustomComponent {
         this.text = text;
         setId(id);
         //Gets a font from the current system and sets the font size
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        String[] fontFamilies = ge.getAvailableFontFamilyNames();
+        GraphicsEnvironment.getLocalGraphicsEnvironment();
         font = new Font("Arial", Font.BOLD, 12);
        
     }
@@ -68,20 +63,26 @@ public class BitButton extends CustomComponent {
     public BitButton(int x, int y, String imgName, int id) {
         super(x, y);
         setId(id);
-        this.imgName = imgName;
         ResourceHandler rh = new ResourceHandler();
-        url = rh.getString(imgName);
-        imageURL = getClass().getClassLoader().getResource(url);
-        img = new ImageIcon(imageURL).getImage();
+        String url = rh.getString(imgName);
 
         //Tries to load a selected version of the button
         try {
+            URL imageURL = getClass().getClassLoader().getResource(url);
+
+            if (imageURL == null) {
+                throw new Exception("Image not found");
+            }
+            img = new ImageIcon(imageURL).getImage();
             String selected = imgName + "_selected";
             url = rh.getString(selected);
             imageURL = getClass().getClassLoader().getResource(url);
+            if (imageURL == null) {
+                throw new Exception("Image not found");
+            }
             selectedImg = new ImageIcon(imageURL).getImage();
         } catch (Exception e) {
-            System.err.println(e);
+            e.printStackTrace();
         }
         // drawing the button with the chosen size and image
         drawImgButton = true;
@@ -91,7 +92,7 @@ public class BitButton extends CustomComponent {
     }
 
     @Override
-    public void notify(Object arg) {
+    public void notify(CalendarEvent arg) {
         if (arg instanceof SelectedEvent) {
             setSelected((SelectedEvent) arg);
         }
@@ -105,8 +106,8 @@ public class BitButton extends CustomComponent {
      *
      * @param event A selected event.
      */
-    public void setSelected(SelectedEvent event) {
-        int selectedId = (Integer) event.getId();
+    private void setSelected(SelectedEvent event) {
+        int selectedId = event.getId();
         if (selectedId == getId()) {
             isSelected = true;
             if (!drawImgButton) {
@@ -118,8 +119,8 @@ public class BitButton extends CustomComponent {
 
     @Override
     public void draw(Graphics g) {
-        p = getLocation();
-        d = getSize();
+        Point p = getLocation();
+        Dimension d = getSize();
         //This is done if the button is an image
         if (drawImgButton) {
             if (isSelected) {
@@ -156,7 +157,7 @@ public class BitButton extends CustomComponent {
      * @param event A deselect event.
      */
     private void setDeSelected(DeSelectEvent event) {
-        int id = (Integer) event.getId();
+        int id = event.getId();
 
         if (getId() == id && isSelected) {
             setBackgroundColor(currentColor);
@@ -178,12 +179,4 @@ public class BitButton extends CustomComponent {
     }
 
 
-    /**
-     * Not implemented
-     * @param state Not implemented
-     * @param color Not implmeneted
-     */
-    @Override
-    protected void animate(Boolean state, Color color) {
-    }
 }

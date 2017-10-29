@@ -19,17 +19,17 @@ import java.util.Date;
  * @author fredrikmakila
  */
 public class TaskObject implements UndoRedo{
-    private String name;
-    private String info;
-    private Date due_date;
-    private Date due_time;
-    private Complete complete;
-    private Priority prio;
-    private CategoryObject category;
+    private final String name;
+    private final String info;
+    private final Date due_date;
+    private final Date due_time;
+    private final Complete complete;
+    private final Priority prio;
+    private final CategoryObject category;
     private int id;
-    private DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-    private DateFormat tf = new SimpleDateFormat("HH:mm");
-    private SixteenBitModel model;
+    private final DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+    private final DateFormat tf = new SimpleDateFormat("HH:mm");
+    private final SixteenBitModel model;
     
     
     /**
@@ -88,16 +88,9 @@ public class TaskObject implements UndoRedo{
      * A type is defined as a String with value "task"
      * @return The type of this object.
      */
+    @SuppressWarnings("SameReturnValue")
     public String getType() {
         return "task";
-    }
-    
-    /**
-     * Gets the identifier of the TaskObject
-     * @return The id of the TaskObject
-     */
-    public int getID() {
-        return id;
     }
     
     /**
@@ -123,15 +116,7 @@ public class TaskObject implements UndoRedo{
     public Date getDate() {
         return due_date;
     }
-    
-    /**
-     * Gets the due time of the TaskObject
-     * @return the due time of the TaskObject
-     */
-    public Date getTime() {
-        return due_time;
-    }
-    
+
     /**
      * Gets the due date of the TaskObject as a String.
      * @return the due date of the TaskObject
@@ -147,15 +132,7 @@ public class TaskObject implements UndoRedo{
     public String getTimeAsString() {
         return tf.format(due_time);
     }
-    
-    /**
-     * Gets the completed state of the TaskObject
-     * @return The task's complete state
-     */
-    public Complete getComplete() {
-        return complete;
-    }
-    
+
     /**
      * Gets the completed state of the TaskObject as a String
      * @return "yes" if the task is complete, otherwise "no"

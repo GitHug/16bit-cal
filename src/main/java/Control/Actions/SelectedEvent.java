@@ -9,7 +9,7 @@ package Control.Actions;
  * Simple event class that make components selected.
  * @author fredrikmakila
  */
-public class SelectedEvent {
+public class SelectedEvent implements CalendarEvent {
     private final int id;
 
     /**

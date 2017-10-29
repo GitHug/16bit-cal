@@ -9,12 +9,10 @@ import java.awt.*;
  * The graphical representation of a task to be shown inside the DayView
  * @author Robin Horneman
  */
-public class TaskPanel extends JPanel{
+class TaskPanel extends JPanel{
     
    /*Private variables*/
-    private TaskObject task;
-    private boolean done = false;
-    private boolean overdue = false;
+    private final TaskObject task;
     
     /*Constructors*/
     /**
@@ -28,22 +26,8 @@ public class TaskPanel extends JPanel{
     }
     
     /*Setters*/
-    /**
-     * Changes the associated task
-     * @param task the new task
-     */
-    public void setTask(TaskObject task) {
-        this.task = task;
-    }
     
     /*Getters*/
-    /**
-     * Returns the associated task
-     * @return this panel´s task
-     */
-    public TaskObject getTask() {
-        return task;
-    }
     
     /*Others*/
     /**
@@ -76,13 +60,5 @@ public class TaskPanel extends JPanel{
         c.gridx = 3; c.gridy = 1;
         this.add(taskDeadline, c);
     }
-    
-    /**
-     * The method that paints the TaskPanel
-     * @param g the graphics to be painted 
-     */
-    @Override
-    public void paint(Graphics g) {
-        super.paint(g);
-    }
+
 }

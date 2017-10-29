@@ -15,6 +15,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class that paints a custom border around a component.
@@ -23,7 +24,7 @@ import java.util.ArrayList;
  * the URL for the images from a property file. 
  * @author fredrikmakila
  */
-public class ImageBorder extends AbstractBorder {
+class ImageBorder extends AbstractBorder {
 
     private Image topCenterImage;
     private Image topLeftImage;
@@ -36,31 +37,10 @@ public class ImageBorder extends AbstractBorder {
     private Image bottomLeftImage;
     private Image bottomRightImage;
 
-    private Insets insets;
     //This will later be changed so the class retrieves the URLs from a property file instead
-    private BorderImage border;
-    private BorderImage defaultBorder = new BorderImage("beam");
-    private String topLeftSrc;
-    private String topCenterSrc;
-    private String topRightSrc;
-    private String leftCenterSrc;
-    private String rightCenterSrc;
-    private String bottomLeftSrc;
-    private String bottomCenterSrc;
-    private String bottomRightSrc;
-    private URL imageURL;
-    private String NEWLINE = System.getProperty("line.separator");
-    
-    /**
-     * Empty constructor for this class.
-     * The constructor tries to load all the necessary images that make up
-     * the border. Uses a defualt border.
-     */
-    public ImageBorder() {
-        border = defaultBorder;
-        loader();   
-    }
-    
+    private final BorderImage border;
+    private final String NEWLINE = System.getProperty("line.separator");
+
     /**
      * Constructor with a defined border.
      * The constructor tries to load all the necessary images that make up
@@ -83,75 +63,46 @@ public class ImageBorder extends AbstractBorder {
      */
     @SuppressWarnings("unchecked")
     private void loader() {
-        ArrayList debug = new ArrayList();
+        List<String> debug = new ArrayList<>();
         ResourceHandler rh = new ResourceHandler();
-        ArrayList borders = rh.getBorders(border.toString());
+        List<ResourceHandler.BorderType> borders = rh.getBorders(border.toString());
         try {
             //Top left
-            topLeftSrc = rh.getBorder(new BorderPiece("top_left"), borders);
-            imageURL = getClass().getClassLoader().getResource(topLeftSrc);
-            topLeftImage = new ImageIcon(imageURL).getImage();
-            debug.add("Successful: " + imageURL + NEWLINE);
+            topLeftImage = createBorder(debug, rh, borders, "top_left");
             //Top center
-            topCenterSrc = rh.getBorder(new BorderPiece("top_center"), borders);
-            imageURL = getClass().getClassLoader().getResource(topCenterSrc);
-            topCenterImage = new ImageIcon(imageURL).getImage();
-            debug.add("Successful: " + imageURL + NEWLINE);
+            topCenterImage = createBorder(debug, rh, borders, "top_center");
             //Top right
-            topRightSrc = rh.getBorder(new BorderPiece("top_right"), borders);
-            imageURL = getClass().getClassLoader().getResource(topRightSrc);
-            topRightImage = new ImageIcon(imageURL).getImage();
-            debug.add("Successful: " + imageURL + NEWLINE);
+            topRightImage = createBorder(debug, rh, borders, "top_right");
             //Left center
-            leftCenterSrc = rh.getBorder(new BorderPiece("left_center"), borders);
-            imageURL = getClass().getClassLoader().getResource(leftCenterSrc);
-            leftCenterImage = new ImageIcon(imageURL).getImage();
-            debug.add("Successful: " + imageURL + NEWLINE); 
+            leftCenterImage = createBorder(debug, rh, borders, "left_center");
             //Right center
-            rightCenterSrc = rh.getBorder(new BorderPiece("right_center"), borders);
-            imageURL = getClass().getClassLoader().getResource(rightCenterSrc);
-            rightCenterImage = new ImageIcon(imageURL).getImage();
-            debug.add("Successful: " + imageURL + NEWLINE);
+            rightCenterImage = createBorder(debug, rh, borders, "right_center");
             //Bottom left
-            bottomLeftSrc = rh.getBorder(new BorderPiece("bottom_left"), borders);
-            imageURL = getClass().getClassLoader().getResource(bottomLeftSrc);
-            bottomLeftImage = new ImageIcon(imageURL).getImage();
-            debug.add("Successful: " + imageURL + NEWLINE); 
+            bottomLeftImage = createBorder(debug, rh, borders, "bottom_left");
             //Bottom center
-            bottomCenterSrc = rh.getBorder(new BorderPiece("bottom_center"), borders);
-            imageURL = getClass().getClassLoader().getResource(bottomCenterSrc);
-            bottomCenterImage = new ImageIcon(imageURL).getImage();
-            debug.add("Successful: " + imageURL + NEWLINE); 
+            bottomCenterImage = createBorder(debug, rh, borders, "bottom_center");
             //Bottom right
-            bottomRightSrc = rh.getBorder(new BorderPiece("bottom_right"), borders);
-            imageURL = getClass().getClassLoader().getResource(bottomRightSrc);
-            bottomRightImage = new ImageIcon(imageURL).getImage();
-            debug.add("Successful: " + imageURL + NEWLINE); 
+            bottomRightImage = createBorder(debug, rh, borders, "bottom_right");
         }
         catch(Exception ex){
             System.out.println(debug);
-            System.err.println(ex);
             ex.printStackTrace();
             System.exit(0);
         }
     }
-    
-    /**
-     * Set the insets for this border.
-     * @param insets new insets to be set
-     * @see Insets
-     */
-    public void setInsets(Insets insets) {
-        this.insets = insets;
-    }
-    
-    /**
-     * Sets a new image for the border.
-     * More info to follow... not yet implemented
-     * @param imageDescription Not yet implemented
-     */
-    public void setImage(String imageDescription) {
-        System.out.println("Not yet implemented...");
+
+    private Image createBorder(List<String> debug, ResourceHandler rh, List<ResourceHandler.BorderType> borders,
+                              String borderPieceName) throws Exception {
+        String src = rh.getBorder(new BorderPiece(borderPieceName), borders);
+        URL imageURL = getClass().getClassLoader().getResource(src);
+
+        if (imageURL == null) {
+            throw new Exception("ImageURL missing for " + src);
+        }
+        Image image = new ImageIcon(imageURL).getImage();
+        debug.add("Successful: " + imageURL + NEWLINE);
+
+        return image;
     }
 
     /**
@@ -164,11 +115,7 @@ public class ImageBorder extends AbstractBorder {
     public Insets getBorderInsets(Component c) {
         if(border == null) {
             return new Insets(0, 0, 0, 0);
-        }
-        else if (insets != null) {
-            return insets;
-        } 
-        else {
+        } else {
             return new Insets(topCenterImage.getHeight(null), 
                     leftCenterImage.getWidth(null), 
                     bottomCenterImage.getHeight(null), 
@@ -192,19 +139,15 @@ public class ImageBorder extends AbstractBorder {
         if(border != null) {
             int topLeftWidth = topLeftImage.getWidth(null);
             int topLeftHeight = topLeftImage.getHeight(null);
-            int topCenterWidth = topCenterImage.getWidth(null);
             int topCenterHeight = topCenterImage.getHeight(null);
             int topRightWidth = topRightImage.getWidth(null);
             int topRightHeight = topRightImage.getHeight(null);
 
             int leftCenterWidth = leftCenterImage.getWidth(null);
-            int leftCenterHeight = leftCenterImage.getHeight(null);
             int rightCenterWidth = rightCenterImage.getWidth(null);
-            int rightCenterHeight = rightCenterImage.getHeight(null);
 
             int bottomLeftWidth = bottomLeftImage.getWidth(null);
             int bottomLeftHeight = bottomLeftImage.getHeight(null);
-            int bottomCenterWidth = bottomCenterImage.getWidth(null);
             int bottomCenterHeight = bottomCenterImage.getHeight(null);
             int bottomRightWidth = bottomRightImage.getWidth(null);
             int bottomRightHeight = bottomRightImage.getHeight(null);
@@ -231,7 +174,7 @@ public class ImageBorder extends AbstractBorder {
      * @param width The width of the section to draw
      * @param height The height of the section to draw
      */
-    public void fillTexture(Graphics2D g2, Image img, int x, int y, int width, int height) {
+    private void fillTexture(Graphics2D g2, Image img, int x, int y, int width, int height) {
         BufferedImage buff = createBufferedImage(img);
         Rectangle anchor = new Rectangle(x, y, img.getWidth(null), img.getHeight(null));
         TexturePaint paint = new TexturePaint(buff, anchor);
@@ -244,7 +187,7 @@ public class ImageBorder extends AbstractBorder {
      * @param img The image to be converted
      * @return A BufferedImage
      */
-    public BufferedImage createBufferedImage(Image img) {
+    private BufferedImage createBufferedImage(Image img) {
         BufferedImage buff = new BufferedImage(img.getWidth(null), img.getHeight(null),
         BufferedImage.TYPE_INT_ARGB);
         Graphics gfx = buff.createGraphics();

@@ -35,45 +35,26 @@ import java.util.prefs.Preferences;
  *
  * @author fredrikmakila
  */
-public class ComponentLoader extends CalendarMethods {
+class ComponentLoader extends CalendarMethods {
 
-    private ArrayList<Drawable> list = new ArrayList<Drawable>();
-    private int dcHeight = 60;
-    private int dcWidth = 65;
-    private int wdHeight = 40;
-    private int wHeight = 60;
-    private int mHeight = 50;
-    private int btnWidth = 120;
-    private int btnHeight = 60;
-    private int addwHeight = 600;
-    private int addwWidth = 240;
-    private int boxWidth = 240;
-    private int boxHeight = 90;
-    private int taskinfoHeight = 300;
-    private int dcTotalWidth;
-    private int dcTotalHeight;
-    private int wdWidth = 65;
+    private final ArrayList<Drawable> list = new ArrayList<>();
+    private final int wdHeight = 40;
+    private final int mHeight = 50;
     private int wdTotalWidth = 0;
-    private int wWidth = 50;
-    private int wTotalHeight = 0;
     private int mWidth;
-    private int x = 0;
-    private int y = 0;
     private int xPos;
     private int yPos;
-    private int month;
-    private int year;
-    private int day;
-    private AtomicInteger id = new AtomicInteger();
+    private final int month;
+    private final int year;
+    private final AtomicInteger id = new AtomicInteger();
     private int totalCalendarWidth;
-    private int totalCalendarHeight;
-    private SixteenBitModel model;
-    private Preferences prefs;
-    private String[] weekDay = {
+    private final SixteenBitModel model;
+    private final Preferences prefs;
+    private final String[] weekDay = {
         "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
     };
-    private DayCardIdentifiers dcId;
-    private DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+    private final DayCardIdentifiers dcId;
+    private final DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 
 
     /**
@@ -81,10 +62,9 @@ public class ComponentLoader extends CalendarMethods {
      */
     public ComponentLoader() {
         prefs = Preferences.userNodeForPackage(getClass());
-        loadResource("Model.Database.imageResource");
+        loadResource();
         month = getMonth();
         year = getYear();
-        day = getDay();
         model = SixteenBitModel.getInstance();
         model.setYear(year);
         dcId = new DayCardIdentifiers();
@@ -96,10 +76,9 @@ public class ComponentLoader extends CalendarMethods {
      * property file name including it's path. A general example is
      * "package.subpackage.propertyfile"
      *
-     * @param url The name of the property file, including its path
      */
-    private void loadResource(String url) {
-        prefs.put("resource", url);
+    private void loadResource() {
+        prefs.put("resource", "Model.Database.imageResource");
     }
 
     /**
@@ -107,10 +86,12 @@ public class ComponentLoader extends CalendarMethods {
      */
     private void createMonthView() {
         //Creates the weekdays
+        int wWidth = 50;
         for (int i = 0; i < weekDay.length; i++) {
             String wd = weekDay[i];
+            int wdWidth = 65;
             xPos = i * wdWidth + wWidth;
-            yPos = 0 + mHeight;
+            yPos = mHeight;
             DayCard wdc = new DayCard(xPos, yPos, wdWidth, wdHeight, new WeekDay(wd).get(), id.incrementAndGet());
             wdc.setBackgroundColor(Color.GREEN);
             wdc.setBorderType(new BorderImage("chain"));
@@ -144,6 +125,7 @@ public class ComponentLoader extends CalendarMethods {
         int week = 0;
         ArrayList array = getWeekNumber(year, month);
         //model.setFirstWeekCardId(id.get() + 1);
+        int wHeight = 60;
         for (int i = 0; i < array.size(); i++) {
             week = (Integer) array.get(i);
             xPos = 0;
@@ -156,7 +138,6 @@ public class ComponentLoader extends CalendarMethods {
             model.selectedObservableRegistration().addObserver(wc);
             list.add(wc);
             dcId.addWeekCard(id.intValue());
-            wTotalHeight += wHeight;
             //adds to paintList
             model.addPaintList(wc);
         }
@@ -164,7 +145,6 @@ public class ComponentLoader extends CalendarMethods {
         //The reason for this is to being able to edit and make daycards transparent
         //without needing to create new daycards
         if (array.size() < 6) {
-            int next = 1;
             for (int i = array.size(); i < 6; i++) {
                 week++;
                 yPos = i * wHeight + wdHeight + mHeight;
@@ -177,7 +157,6 @@ public class ComponentLoader extends CalendarMethods {
                 model.selectedObservableRegistration().addObserver(wc);
                 list.add(wc);
                 dcId.addWeekCard(id.intValue());
-                wTotalHeight += wHeight;
                 //adds to paintList
                 model.addPaintList(wc);
             }
@@ -199,6 +178,8 @@ public class ComponentLoader extends CalendarMethods {
         }
         numDays = getNumberOfDays(prevYear, prevMonth);
         numDays = numDays - xStart;
+        int dcWidth = 65;
+        int dcHeight = 60;
         for (int i = 0; i < xStart; i++) {
             int d = numDays + i + 1;
             xPos = i * dcWidth + wWidth;
@@ -210,7 +191,7 @@ public class ComponentLoader extends CalendarMethods {
             model.animationObservableRegistration().addObserver(dc);
             model.deSelectedObservableRegistration().addObserver(dc);
             dc.setSelectable(false);
-            Action dayCardWindow = new Action(dc, "daycardw");
+            Action dayCardWindow = new Action("daycardw");
             dc.addActionListener(dayCardWindow);
             list.add(dc);
             dcId.addDayCard(new CardStuffList(id.intValue()));
@@ -240,7 +221,7 @@ public class ComponentLoader extends CalendarMethods {
             toolTip.unregisterComponent(dc);
             CustomToolTipManager tool = CustomToolTipManager.sharedInstance();
             tool.registerComponent(dc);
-            Action dayCardWindow = new Action(dc, "daycardw");
+            Action dayCardWindow = new Action("daycardw");
             dc.addActionListener(dayCardWindow);
             list.add(dc);
             tempString = tempString + addChar(d);
@@ -255,18 +236,9 @@ public class ComponentLoader extends CalendarMethods {
             model.addPaintList(dc);
         }
         //Next month
-        int nextMonth;
-        int nextYear;
         int counter = 0;
-        if (month + 1 > 12) {
-            nextMonth = 0;
-            nextYear = year + 1;
-        } else {
-            nextMonth = month - 1;
-            nextYear = year;
-        }
+
         for (int i = (xPos - wWidth) / dcWidth + 1; i < 7; i++) {
-            int d = i;
             counter++;
             xPos = i * dcWidth + wWidth;
             DayCard dc = new DayCard(xPos, yPos, dcWidth, dcHeight, "" + counter, id.incrementAndGet());
@@ -276,7 +248,7 @@ public class ComponentLoader extends CalendarMethods {
             model.deSelectedObservableRegistration().addObserver(dc);
             model.animationObservableRegistration().addObserver(dc);
             dc.setSelectable(false);
-            Action dayCardWindow = new Action(dc, "daycardw");
+            Action dayCardWindow = new Action("daycardw");
             dc.addActionListener(dayCardWindow);
             list.add(dc);
             dcId.addDayCard(new CardStuffList(id.intValue()));
@@ -299,7 +271,7 @@ public class ComponentLoader extends CalendarMethods {
                 model.deSelectedObservableRegistration().addObserver(dc);
                 model.animationObservableRegistration().addObserver(dc);
                 dc.setSelectable(false);
-                Action dayCardWindow = new Action(dc, "daycardw");
+                Action dayCardWindow = new Action("daycardw");
                 dc.addActionListener(dayCardWindow);
                 list.add(dc);
                 dcId.addDayCard(new CardStuffList(id.intValue()));
@@ -309,11 +281,9 @@ public class ComponentLoader extends CalendarMethods {
         }
         //model.setLastDayCardId(id.get());
 
-        dcTotalWidth = dcWidth * 7;
-        dcTotalHeight = yPos * dcHeight;
+        int dcTotalWidth = dcWidth * 7;
 
         totalCalendarWidth = wWidth + dcTotalWidth;
-        totalCalendarHeight = mHeight + dcTotalHeight;
 
     }
 
@@ -325,6 +295,8 @@ public class ComponentLoader extends CalendarMethods {
         //Creates the background for the menu
         xPos = totalCalendarWidth;
         yPos = 0;
+        int addwWidth = 240;
+        int addwHeight = 600;
         BackgroundComponent rgtwindow = new BackgroundComponent(xPos, yPos, addwWidth, addwHeight);
         rgtwindow.setBorderType(new BorderImage("blob"));
         list.add(rgtwindow);
@@ -332,6 +304,8 @@ public class ComponentLoader extends CalendarMethods {
         model.addPaintList(rgtwindow);
 
         //Adds another backgound
+        int boxHeight = 90;
+        int boxWidth = 240;
         BackgroundComponent box = new BackgroundComponent(xPos, yPos, boxWidth, boxHeight);
         box.setBackgroundColor(Color.cyan);
         box.setBorderType(new BorderImage("blob"));
@@ -397,6 +371,7 @@ public class ComponentLoader extends CalendarMethods {
         model.addPaintList(highP);*/
         
         //Adds a Checkbox with name "Low Prio"
+        int btnWidth = 120;
         xPos = xPos + btnWidth - 50;
         yPos = mHeight + wdHeight + 12;
         Checkbox lowPCheck = new Checkbox(xPos, yPos, "Low Prio", id.incrementAndGet());
@@ -416,13 +391,13 @@ public class ComponentLoader extends CalendarMethods {
         
         //Adds a Checkbox with name "Med Prio"
         //xPos = xPos + btnWidth;
+        int btnHeight = 60;
         yPos = yPos + btnHeight - 20;
         Checkbox medPCheck = new Checkbox(xPos, yPos, "Med Prio", id.incrementAndGet());
         medPCheck.setBackgroundColor(new Color(50, 100, 255));
         medPCheck.setToolTipText("Shows the tasks with medium priority");
-        ToolTipManager toolTip1 = ToolTipManager.sharedInstance();
+        ToolTipManager.sharedInstance();
         toolTip.unregisterComponent(medPCheck);
-        CustomToolTipManager tool1 = CustomToolTipManager.sharedInstance();
         tool.registerComponent(medPCheck);
         model.selectedObservableRegistration().addObserver(medPCheck);
         model.deSelectedObservableRegistration().addObserver(medPCheck);
@@ -438,9 +413,8 @@ public class ComponentLoader extends CalendarMethods {
         Checkbox highPCheck = new Checkbox(xPos, yPos, "High Prio", id.incrementAndGet());
         highPCheck.setBackgroundColor(Color.RED);
         highPCheck.setToolTipText("Shows the tasks with high priority");
-        ToolTipManager toolTip2 = ToolTipManager.sharedInstance();
+        ToolTipManager.sharedInstance();
         toolTip.unregisterComponent(highPCheck);
-        CustomToolTipManager tool2 = CustomToolTipManager.sharedInstance();
         tool.registerComponent(highPCheck);
         model.selectedObservableRegistration().addObserver(highPCheck);
         model.deSelectedObservableRegistration().addObserver(highPCheck);
@@ -457,9 +431,8 @@ public class ComponentLoader extends CalendarMethods {
         undo.setBackgroundColor(Color.BLUE);
         undo.setBorderType(new BorderImage("blob"));
         undo.setToolTipText("Undoes the recent action");
-        ToolTipManager toolTipU = ToolTipManager.sharedInstance();
+        ToolTipManager.sharedInstance();
         toolTip.unregisterComponent(undo);
-        CustomToolTipManager toolU = CustomToolTipManager.sharedInstance();
         tool.registerComponent(undo);
         model.selectedObservableRegistration().addObserver(undo);
         model.deSelectedObservableRegistration().addObserver(undo);
@@ -472,9 +445,8 @@ public class ComponentLoader extends CalendarMethods {
         yPos = mHeight + wdHeight + btnHeight;
         BitButton redo = new BitButton(xPos, yPos, btnWidth, btnHeight, "Redo", id.incrementAndGet());
         redo.setToolTipText("Redoes an action");
-        ToolTipManager toolTipR = ToolTipManager.sharedInstance();
+        ToolTipManager.sharedInstance();
         toolTip.unregisterComponent(redo);
-        CustomToolTipManager toolR = CustomToolTipManager.sharedInstance();
         tool.registerComponent(redo);
         redo.setBackgroundColor(Color.BLUE);
         redo.setBorderType(new BorderImage("blob"));
@@ -486,15 +458,14 @@ public class ComponentLoader extends CalendarMethods {
         model.addPaintList(redo);
         
         //Adds a button for the help system
-        yPos = addwHeight - btnHeight*2;
-        xPos = xPos + btnWidth/2;
-        BitButton help = new BitButton(xPos, yPos, btnWidth/2, btnHeight, "Help", id.incrementAndGet());
+        yPos = addwHeight - btnHeight *2;
+        xPos = xPos + btnWidth /2;
+        BitButton help = new BitButton(xPos, yPos, btnWidth /2, btnHeight, "Help", id.incrementAndGet());
         help.setBackgroundColor(Color.PINK);
         help.setBorderType(new BorderImage("blob"));
         help.setToolTipText("Starts the guide that will show you how to use the application");
-        ToolTipManager toolTipH = ToolTipManager.sharedInstance();
+        ToolTipManager.sharedInstance();
         toolTip.unregisterComponent(help);
-        CustomToolTipManager toolH = CustomToolTipManager.sharedInstance();
         tool.registerComponent(help);
         model.selectedObservableRegistration().addObserver(help);
         model.deSelectedObservableRegistration().addObserver(help);
@@ -529,11 +500,10 @@ public class ComponentLoader extends CalendarMethods {
         BitButton backArrow = new BitButton(0, 0, "back_arrow", id.incrementAndGet());
         model.selectedObservableRegistration().addObserver(backArrow);
         model.deSelectedObservableRegistration().addObserver(backArrow);
-        Action prevAction = new Action(backArrow, "previous");
+        Action prevAction = new Action("previous");
         backArrow.setToolTipText("Go to the previous month");
-        ToolTipManager toolTipB = ToolTipManager.sharedInstance();
+        ToolTipManager.sharedInstance();
         toolTip.unregisterComponent(backArrow);
-        CustomToolTipManager toolB = CustomToolTipManager.sharedInstance();
         tool.registerComponent(backArrow);
         backArrow.addActionListener(prevAction);
         list.add(backArrow);
@@ -544,11 +514,10 @@ public class ComponentLoader extends CalendarMethods {
         BitButton forwardArrow = new BitButton(mWidth - backArrow.getSize().width, 0, "forward_arrow", id.incrementAndGet());
         model.selectedObservableRegistration().addObserver(forwardArrow);
         model.deSelectedObservableRegistration().addObserver(forwardArrow);
-        Action nextAction = new Action(forwardArrow, "next");
+        Action nextAction = new Action("next");
         forwardArrow.setToolTipText("Go to the next month");
-        ToolTipManager toolTipN = ToolTipManager.sharedInstance();
+        ToolTipManager.sharedInstance();
         toolTip.unregisterComponent(forwardArrow);
-        CustomToolTipManager toolN = CustomToolTipManager.sharedInstance();
         tool.registerComponent(forwardArrow);
         forwardArrow.addActionListener(nextAction);
         list.add(forwardArrow);
@@ -561,10 +530,10 @@ public class ComponentLoader extends CalendarMethods {
     
     
     private void fillModelWithDayCards() {
-        ArrayList<DayCard> tempDayList = new ArrayList<DayCard>();
-        for(int i=0;i<list.size();i++){
-            if(list.get(i) instanceof DayCard){
-                tempDayList.add((DayCard) list.get(i));
+        ArrayList<DayCard> tempDayList = new ArrayList<>();
+        for (Drawable aList : list) {
+            if (aList instanceof DayCard) {
+                tempDayList.add((DayCard) aList);
             }
         }
         model.setDayCardList(tempDayList);
@@ -582,22 +551,12 @@ public class ComponentLoader extends CalendarMethods {
     }
 
     /**
-     * Getter for this class. Returns an arraylist containing all the components
-     * that was defined in set.
-     *
-     * @return an arraylist with drawables
-     */
-    public ArrayList<Drawable> get() {
-        return list;
-    }
-    
-    /**
      * Converts an integer to a string and adds an extra character 0 if
      * the integer is between 0 and 9 to make the total number to two.
-     * @param integer
-     * @return 
+     * @param integer int
+     * @return string representation of int
      */
-    public String addChar(int integer) {
+    private String addChar(int integer) {
         String string;
         if(integer < 10) {
             string = "0"+integer;

@@ -13,7 +13,7 @@ Author: fredrikmakila
       <tinfo />
       <due_date>2012-05-17</due_date>
       <due_time>12:12</due_time>
-      <complete status="no" />
+      <complete/>
       <prio priority="low" />
       <tcategory>Standard</tcategory>
     </task>
@@ -22,7 +22,7 @@ Author: fredrikmakila
       <tinfo />
       <due_date>2012-05-09</due_date>
       <due_time>12:12</due_time>
-      <complete status="no" />
+      <complete/>
       <prio priority="high" />
       <tcategory>Standard</tcategory>
     </task>

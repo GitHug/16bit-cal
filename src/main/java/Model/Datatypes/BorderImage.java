@@ -14,12 +14,8 @@ import java.util.List;
  */
 public class BorderImage {
         private String border = null;
-        private String[] borders = {
-            "flashy_border", "beam", "chain", "diamond", "tiny", "blob"
-        };
-        List lst = Arrays.asList(borders);
-        
-        /**
+
+    /**
          * Constructor.
          * This constructor creates a new border. The following borders are available
          * <lu>
@@ -33,6 +29,10 @@ public class BorderImage {
          * @param border The name of the border
          */
         public BorderImage(String border) {
+            String[] borders = {
+                    "flashy_border", "beam", "chain", "diamond", "tiny", "blob"
+            };
+            List lst = Arrays.asList(borders);
             if(lst.contains(border.toLowerCase())) {
                 this.border = border;
             }
@@ -41,7 +41,7 @@ public class BorderImage {
                     throw new NotABorderException(border + " is not a valid border");
                 } 
                 catch (NotABorderException ex) {
-                    System.err.println(ex);
+                    ex.printStackTrace();
                 }
             }
         }
@@ -54,14 +54,7 @@ public class BorderImage {
         public String toString() {
             return border;
         }
-        
-        /**
-         * Returns all available borders to choose from
-         * @return The name of all borders as an array
-         */
-        public String[] getAvailable() {
-            return borders;
-        }
+
         
         /**
          * Exception that is thrown when input to the BorderImage constructor is invalid.
@@ -69,19 +62,14 @@ public class BorderImage {
          * then this exception is thrown.
          */
         private class NotABorderException extends Exception{
-            
-            /**
-             * Empty constructor to be able to cast the exception without a message.
-             */
-            public NotABorderException() {   
-            }
+
             
             /**
              * Constructor that takes a description. 
              * The description can give the user more information on what went wrong
              * @param description a message to be shown
              */
-            public NotABorderException(String description) {
+            NotABorderException(String description) {
                 super(description);
             }
         }

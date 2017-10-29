@@ -16,7 +16,7 @@ import java.awt.event.KeyEvent;
  */
 public class MenuBar extends JMenuBar {
     
-private JMenuBar menubar = new JMenuBar();
+private final JMenuBar menubar = new JMenuBar();
 
 
 /**
@@ -44,8 +44,6 @@ public MenuBar () {
         JMenuItem fileItem1 = new JMenuItem(exitAction);
         fileItem1.setText("Exit");
         fileItem1.setToolTipText("Exits the calendar");
-        
-        JMenuItem settingItem1 = new JMenuItem("Options");
         
         // Help item in help menu
         Action aboutAction = new Action("aboutw");
@@ -78,7 +76,7 @@ public MenuBar () {
 
 /**
  * Getter for Menubar
- * @return 
+ * @return  menu bar
  */
 
 public JMenuBar getMenuBar()
@@ -86,56 +84,5 @@ public JMenuBar getMenuBar()
     return menubar;
 }
  
-}
-
-/**
- * Creates a Menubar that is transperence 
- * @author Kenny
- */
-class TransMenuBar extends JMenuBar {
-    
-    /**
-     * Constructor for the menubar
-     * @param 
-     */
-    public TransMenuBar()
-    {
-        super();
-        setOpaque(false);
-    }
-    
-    
-}
-/**
- * Creates a MenuItem that is transperence
- * @author Kenny
- */
-class TransMenuItem extends JMenuItem
-{
-    /**
-     * Constructor for the menuitem
-     * @param text, text for the menuitem
-     */
-    public TransMenuItem(String text)
-    {
-        super(text);
-        setOpaque(false);
-    }
-   
-    /**
-     * Graphics for making the menuitem transperence
-     * @param g 
-     */
-  
-    /*
-    @Override
-    public void paint(Graphics g)
-    {
-        Graphics2D g2 = (Graphics2D) g.create();
-        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,0.1f));
-        super.paint(g2);
-        g2.dispose();
-    }
-    */
 }
 

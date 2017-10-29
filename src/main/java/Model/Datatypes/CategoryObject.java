@@ -15,11 +15,12 @@ import java.awt.*;
  */
 
 public class CategoryObject {
-    String name;
-    ImageIcon icon;
-    Color color;
-    int id;
-    
+    private final String name;
+    private final ImageIcon icon;
+    private final Color color;
+    private int id;
+
+    private static final String CATEGORY = "category";
     
     /**
      * A constructor for category object
@@ -61,20 +62,12 @@ public class CategoryObject {
     }
     
     /**
-     * Gets the identifier of the category
-     * @return the id of the category
-     */
-    public int getID() {
-        return id;
-    }
-    
-    /**
      * Gets the type of the category.
      * The type of a category is defined as a String of value "category"
      * @return the type of the category
      */
     public String getType() {
-        return "category";
+        return CATEGORY;
     }
     
     

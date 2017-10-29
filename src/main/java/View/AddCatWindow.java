@@ -12,11 +12,10 @@ import java.awt.*;
 public class AddCatWindow extends JFrame {
     
     
-    private JColorChooser colchoose = new JColorChooser();
+    private final JColorChooser colchoose = new JColorChooser();
     private JTextField catText;
     private AddWindow aw;
     private AddEventWindow aew;
-    private Action saveCatAction;
     private boolean b = true;
     
     /**
@@ -75,6 +74,7 @@ public class AddCatWindow extends JFrame {
         
         // Button for saving a customized category, saves name and collor and 
         // adds it to a JCombobox
+        Action saveCatAction;
         if (b) {
             saveCatAction = new Action(aw, this, "saveCat");
         }      

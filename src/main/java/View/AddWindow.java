@@ -6,7 +6,7 @@ import Model.SixteenBitModel;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.List;
 
 
 
@@ -21,16 +21,13 @@ public class AddWindow extends JFrame {
     
     private JTextField tfTaskName;
     private JTextField tfTaskInfo;
-    private JLabel lbTaskName;
-    private JLabel lbTaskInfo;
-    private JLabel lbTaskCat;
-    private DayCardWindow d;
-    private String priority[] = {"High", "Normal", "Low"};
-    private String[] stringarray = {"Standard"};
-    private DefaultComboBoxModel comboboxmodel = new DefaultComboBoxModel(stringarray);
-    private JComboBox combobox;
-    private JComboBox comboboxprio;
-    private SixteenBitModel model = SixteenBitModel.getInstance();
+    private final DayCardWindow d;
+    private final String[] priority = {"High", "Normal", "Low"};
+    private final String[] stringarray = {"Standard"};
+    private final DefaultComboBoxModel<String> comboboxmodel = new DefaultComboBoxModel<>(stringarray);
+    private JComboBox<String> combobox;
+    private JComboBox<String> comboboxprio;
+    private final SixteenBitModel model = SixteenBitModel.getInstance();
     
     
     
@@ -60,7 +57,7 @@ public class AddWindow extends JFrame {
         c.fill = GridBagConstraints.HORIZONTAL;
         
         // Task Name option
-        lbTaskName = new JLabel("Task name");
+        JLabel lbTaskName = new JLabel("Task name");
         c.gridx = 0;
         c.gridy = 0;
         c.gridwidth = 1;
@@ -74,7 +71,7 @@ public class AddWindow extends JFrame {
         paneAdd.add(tfTaskName, c);
         
         // Task Info option
-        lbTaskInfo = new JLabel("Task Info");
+        JLabel lbTaskInfo = new JLabel("Task Info");
         c.gridx = 0;
         c.gridy = 1;
         c.gridwidth = 1;
@@ -88,19 +85,19 @@ public class AddWindow extends JFrame {
         paneAdd.add(tfTaskInfo, c);
         
         // Task Category
-        lbTaskCat = new JLabel("Task Category ");
+        JLabel lbTaskCat = new JLabel("Task Category ");
         c.gridx = 0;
         c.gridy = 2;
         c.gridwidth = 1;
         paneAdd.add(lbTaskCat, c);
         
         
-        combobox = new JComboBox(comboboxmodel);
+        combobox = new JComboBox<>(comboboxmodel);
         // Get all the saved Categories and add it to the combobox
-        ArrayList<CategoryObject> tempList = model.getXMLHandler().getCategories();
-        for(int i = 0; i<tempList.size();i++) {
-            if(!tempList.get(i).getName().equals("Standard")){
-                combobox.addItem(tempList.get(i).getName());
+        List<CategoryObject> tempList = model.getXMLHandler().getCategories();
+        for (CategoryObject aTempList : tempList) {
+            if (!aTempList.getName().equals("Standard")) {
+                combobox.addItem(aTempList.getName());
             }
         }
         c.gridx = 1;
@@ -116,7 +113,7 @@ public class AddWindow extends JFrame {
         paneAdd.add(lbTaskPrio, c);
         
         // Combobox for task priority
-        comboboxprio = new JComboBox(priority);
+        comboboxprio = new JComboBox<>(priority);
         c.gridx = 1;
         c.gridy = 3;
         c.gridwidth = 2;

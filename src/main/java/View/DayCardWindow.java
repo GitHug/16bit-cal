@@ -1,8 +1,6 @@
 package View;
 
-import Model.Datatypes.Complete;
 import Model.Datatypes.EventObject;
-import Model.Datatypes.Priority;
 import Model.Datatypes.TaskObject;
 import Model.SixteenBitModel;
 import Utils.OsUtils;
@@ -14,10 +12,8 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.List;
 
 /**
  * Initiates the window where the user can view tasks.
@@ -26,24 +22,10 @@ import java.util.Date;
  */
 public class DayCardWindow extends JFrame {
 
-    private ButtonPanel buttonpanel;
-    private Container pane;
-    private DefaultTableModel tableModel = new DefaultTableModel();
-    private JTable table = new JTable();
-    private DateFormat tdf = new SimpleDateFormat("yyyy-MM-dd");
-    private DateFormat ttf = new SimpleDateFormat("HH:mm");
-    private String sDates = "2012-12-12";
-    private String sTimes = "12:12";
-    private Date tDate;
-    private Date tTime;
-    private Priority tprio = new Priority("normal");
-    private Complete tcomp = new Complete("no");
-    private TaskObject to;
-    private ArrayList<TaskObject> Tasklist;
-    private ArrayList<EventObject> Eventlist;
-    private Point point = new Point();
-    private JScrollPane scrollPane;
-    
+    private final DefaultTableModel tableModel = new DefaultTableModel();
+    private final JTable table = new JTable();
+    private final Point point = new Point();
+
 
     /**
      * Constructor for the class.
@@ -133,21 +115,21 @@ public class DayCardWindow extends JFrame {
      * Adds all the components(buttons etc.) to the DayCardWindow.
      */
     private void addComponentsToPane() {
-        pane = this.getContentPane();
+        Container pane = this.getContentPane();
         pane.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
 
         SixteenBitModel model = SixteenBitModel.getInstance();
-        Tasklist = new ArrayList<TaskObject>();
-        Eventlist = new ArrayList<EventObject>();
+        List<TaskObject> tasklist = new ArrayList<>();
+        List<EventObject> eventlist = new ArrayList<>();
 
         //Getting list of tasks
         if (model.getTasks() != null) {
-            Tasklist = model.getTasks();
+            tasklist = model.getTasks();
         }
         //Getting list of events
         if (model.getEvents() != null) {
-            Eventlist = model.getEvents();
+            eventlist = model.getEvents();
         }
         
         tableModel.setRowCount(0);
@@ -157,25 +139,25 @@ public class DayCardWindow extends JFrame {
         
         //Fill table
         int minimumRows;
-        if(Tasklist.size()<=Eventlist.size()){
-            minimumRows = Tasklist.size();
+        if(tasklist.size()<= eventlist.size()){
+            minimumRows = tasklist.size();
         }
         else{
-            minimumRows = Eventlist.size();
+            minimumRows = eventlist.size();
         }
         
         for (int i = 0; i < minimumRows; i++) {
-            tableModel.addRow(new Object[]{Tasklist.get(i).getName(), Eventlist.get(i).getName()});
-            System.out.println("Adding " + Tasklist.get(i).getName() + " to tablemodel");
+            tableModel.addRow(new Object[]{tasklist.get(i).getName(), eventlist.get(i).getName()});
+            System.out.println("Adding " + tasklist.get(i).getName() + " to tablemodel");
         }
-        if(Tasklist.size()>Eventlist.size()){
-            for(int i = minimumRows; i<Tasklist.size(); i++){
-                tableModel.addRow(new Object[]{Tasklist.get(i).getName(), ""});
+        if(tasklist.size()> eventlist.size()){
+            for(int i = minimumRows; i< tasklist.size(); i++){
+                tableModel.addRow(new Object[]{tasklist.get(i).getName(), ""});
             }
         }
-        else if(Eventlist.size()>Tasklist.size()){
-            for(int i = minimumRows;i<Eventlist.size(); i++){
-                tableModel.addRow(new Object[]{"", Eventlist.get(i).getName()});
+        else if(eventlist.size()> tasklist.size()){
+            for(int i = minimumRows; i< eventlist.size(); i++){
+                tableModel.addRow(new Object[]{"", eventlist.get(i).getName()});
             }
         }
 
@@ -186,7 +168,7 @@ public class DayCardWindow extends JFrame {
             table.setRowHeight(i, 32);
         }
         Dimension d = new Dimension(650, 300);
-        scrollPane = new JScrollPane(table);
+        JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setPreferredSize(d);
 
         table.setFillsViewportHeight(true);
@@ -200,7 +182,7 @@ public class DayCardWindow extends JFrame {
 
         c.anchor = GridBagConstraints.PAGE_START;
 
-        buttonpanel = new ButtonPanel(this);
+        ButtonPanel buttonpanel = new ButtonPanel(this);
         c.fill = GridBagConstraints.NONE;
         c.gridy = 2;
         c.weighty = 1.0;
@@ -223,11 +205,11 @@ public class DayCardWindow extends JFrame {
     /**
      * Class to create a custom cell renderer.
      */
-    public class CustomTableCellRenderer extends DefaultTableCellRenderer {
+    class CustomTableCellRenderer extends DefaultTableCellRenderer {
 
-        private SixteenBitModel model = SixteenBitModel.getInstance();
-        private ArrayList<TaskObject> taskobjects;
-        private ArrayList<EventObject> eventobjects;
+        private final SixteenBitModel model = SixteenBitModel.getInstance();
+        private List<TaskObject> taskobjects;
+        private List<EventObject> eventobjects;
 
         /**
          * Method that defines what will be shown in the cells. Automatically
@@ -247,7 +229,7 @@ public class DayCardWindow extends JFrame {
          * @param row the row index of the cell being drawn. When drawing the
          * header, the value of row is -1
          * @param column the column index of the cell being drawn
-         * @return
+         * @return component
          */
         @Override
         public Component getTableCellRendererComponent(JTable table,
@@ -258,30 +240,26 @@ public class DayCardWindow extends JFrame {
             eventobjects = model.getEvents();
             System.out.println("Column number is: "+column);
             if(column==0){
-            for (int i = 0; i < taskobjects.size(); i++) {
-                if (obj.toString().equals(taskobjects.get(i).getName()) && obj!=null) {
-                    //System.out.println("Found task with color: " + taskobjects.get(i).getCategory().getColor());
-                    return new TaskPanel(taskobjects.get(i));
+                for (TaskObject taskobject : taskobjects) {
+                    if (obj != null && obj.toString().equals(taskobject.getName())) {
+                        //System.out.println("Found task with color: " + taskobjects.get(i).getCategory().getColor());
+                        return new TaskPanel(taskobject);
+                    }
                 }
-            }
             }
             if(column==1){
-                for (int i = 0; i < eventobjects.size(); i++) {
-                if (obj.toString().equals(eventobjects.get(i).getName()) && obj!=null) {
-                    //System.out.println("Found event with color: " + eventobjects.get(i).getCategory().getColor());
-                    return new EventPanel(eventobjects.get(i));
+                for (EventObject eventobject : eventobjects) {
+                    if (obj != null && obj.toString().equals(eventobject.getName())) {
+                        //System.out.println("Found event with color: " + eventobjects.get(i).getCategory().getColor());
+                        return new EventPanel(eventobject);
+                    }
                 }
-            }
             }
             //if no match is found (unlikely) set TaskPanel with index value
             return cell;
 
         }
     }
-    /**
-     * A Custom List Cell Renderer for coloring the background according to
-     * chosen category
-     */
     /*
      * public class CustomListCellRenderer extends DefaultListCellRenderer {
      *

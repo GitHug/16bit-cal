@@ -13,7 +13,7 @@ import java.awt.*;
  * the border. 
  * @author fredrikmakila
  */
-public class UpdateEvent {
+public class UpdateEvent implements CalendarEvent {
     /**
      * Defines the color for the daycards of the current month for an update event
      */
@@ -26,10 +26,6 @@ public class UpdateEvent {
      * Defines the color for the daycards of the previous month for an update event
      */
     public final Color PREVMONTH = new Color(0, 200, 255, 100);
-    /**
-     * Defines the color for the daycard for today's date
-     */
-    public final Color TODAY = Color.RED;
     /**
      * Defines the color for the month for an update event
      */
@@ -101,18 +97,7 @@ public class UpdateEvent {
     public boolean getShowBorder() {
         return showBorder;
     }
-    
-    /**
-     * Makes the daycard completly transparent. 
-     * It also makes the border not visible as well as the text color.
-     */
-    public void setTransparent() {
-        color = new Color(0, 0, 0, 0);
-        showBorder = false;
-        textColor = color;
-        selectable = false;
-    }
-    
+
     /**
      * Returns the color that the component should have.
      * @return The color for the component. 

@@ -5,7 +5,7 @@
 
 package View;
 
-import Model.Datatypes.BorderImage;
+import Control.Actions.CalendarEvent;
 
 import java.awt.*;
 
@@ -14,8 +14,6 @@ import java.awt.*;
  * @author fredrikmakila
  */
 public class BackgroundComponent extends CustomComponent {
-    private Point p;
-    private Dimension d;
 
     /**
      * Only constructor for this class.
@@ -27,20 +25,11 @@ public class BackgroundComponent extends CustomComponent {
     public BackgroundComponent(int x, int y, int width, int height) {
         super(x, y, width, height);
     }
-    
-    /**
-     * Convenience method for public access to setBorderByName.
-     * @param border The name of the new border.
-     * @see BorderImage
-     */
-    private void setBorderByName(BorderImage border) {
-        setBorderType(border);
-    }
-    
+
     @Override
     public void draw(Graphics g) {
-        p = getLocation();
-        d = getSize();
+        Point p = getLocation();
+        Dimension d = getSize();
         Graphics2D g2d = (Graphics2D) g;
         //Sets antialiasing for smoother shapes
         g2d.setRenderingHint(
@@ -57,16 +46,8 @@ public class BackgroundComponent extends CustomComponent {
 
 
     @Override
-    public void notify(Object event) {
+    public void notify(CalendarEvent event) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    /**
-     * Not implemented
-     * @param state Not implemented
-     * @param color Not implemented
-     */
-    @Override
-    protected void animate(Boolean state, Color color) {
-    }
 }

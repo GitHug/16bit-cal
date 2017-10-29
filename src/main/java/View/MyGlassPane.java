@@ -29,16 +29,6 @@ import java.util.StringTokenizer;
  */
 public class MyGlassPane extends JPanel {
 
-    private String imgName = "zeppelin";
-    private String lidImgName = "lid";
-    private String warehouseImgName = "warehouse";
-    private String walkImgName = "walk";
-    private String houseImgName = "house";
-    private String tallHouseImgName = "tall_house";
-    private String moonImgName = "moon";
-    private String secretImgName = "secret";
-    private String url;
-    private URL imageURL;
     private final Image zeppelinImage;
     private final Image lidImage;
     private final Image warehouseImage;
@@ -52,29 +42,25 @@ public class MyGlassPane extends JPanel {
     private Canvas canvas;
     private boolean state = true;
     private MenuBar menu;
-    private int imgX = 0;
-    private int imgY = 0;
     private JMenuBar menubar;
     private Instruction rotationInstruction;
     private Instruction moveInstruction;
     private Instruction popupInstruction;
     private JFrame frame;
-    private ArrayList<Point> positionList = new ArrayList<Point>();
-    private ArrayList<Image> imageList = new ArrayList<Image>();
+    private final ArrayList<Point> positionList = new ArrayList<>();
+    private final ArrayList<Image> imageList = new ArrayList<>();
     private int warehouseX;
     private int warehouseY;
     private BufferedImage menuImage;
     private int zeppelinX;
     private int zeppelinY;
-    private BasicStroke stroke = new BasicStroke(2.0f);
+    private final BasicStroke stroke = new BasicStroke(2.0f);
     private Font font;
-    private int fontSize = 12;
     private JButton button;
     private JButton buttonOk;
     private Action action;
     private JButton buttonCancel;
     private boolean runInstruction = false;
-    MouseAdapter mouse;
     private int secretCounter = 0;
 
 //********************CONSTRUCTOR*****************/
@@ -90,45 +76,89 @@ public class MyGlassPane extends JPanel {
 
         //Loads a zeppelin image
         ResourceHandler rh = new ResourceHandler();
-        url = rh.getString(imgName);
-        imageURL = getClass().getClassLoader().getResource(url);
-        zeppelinImage = new ImageIcon(imageURL).getImage();
+        String imgName = "zeppelin";
+        String url = rh.getString(imgName);
+        URL imageURL = getClass().getClassLoader().getResource(url);
+        if (imageURL != null) {
+            zeppelinImage = new ImageIcon(imageURL).getImage();
+        } else {
+            throw new RuntimeException("ImageURL null");
+        }
+
 
         //Loads an image of a lid/hatch
+        String lidImgName = "lid";
         url = rh.getString(lidImgName);
         imageURL = getClass().getClassLoader().getResource(url);
-        lidImage = new ImageIcon(imageURL).getImage();
+        if (imageURL != null) {
+            lidImage = new ImageIcon(imageURL).getImage();
+        } else {
+            throw new RuntimeException("ImageURL null");
+        }
 
         //Loads an image of a warehouse
+        String warehouseImgName = "warehouse";
         url = rh.getString(warehouseImgName);
         imageURL = getClass().getClassLoader().getResource(url);
-        warehouseImage = new ImageIcon(imageURL).getImage();
+
+        if (imageURL != null) {
+            warehouseImage = new ImageIcon(imageURL).getImage();
+        } else {
+            throw new RuntimeException("ImageURL null");
+        }
 
         //Loads an image of a board walk
+        String walkImgName = "walk";
         url = rh.getString(walkImgName);
         imageURL = getClass().getClassLoader().getResource(url);
-        walkImage = new ImageIcon(imageURL).getImage();
+        if (imageURL != null) {
+            walkImage = new ImageIcon(imageURL).getImage();
+        } else {
+            throw new RuntimeException("ImageURL null");
+        }
+
 
         //Loads an image of a house
+        String houseImgName = "house";
         url = rh.getString(houseImgName);
         imageURL = getClass().getClassLoader().getResource(url);
-        houseImage = new ImageIcon(imageURL).getImage();
+        if (imageURL != null) {
+            houseImage = new ImageIcon(imageURL).getImage();
+        } else {
+            throw new RuntimeException("ImageURL null");
+        }
 
         //Loads an image of a taller house
+        String tallHouseImgName = "tall_house";
         url = rh.getString(tallHouseImgName);
         imageURL = getClass().getClassLoader().getResource(url);
-        tallHouseImage = new ImageIcon(imageURL).getImage();
+        if (imageURL != null) {
+            tallHouseImage = new ImageIcon(imageURL).getImage();
+        } else {
+            throw new RuntimeException("ImageURL null");
+        }
+
 
         //Loads an image of a moon
+        String moonImgName = "moon";
         url = rh.getString(moonImgName);
         imageURL = getClass().getClassLoader().getResource(url);
-        moonImage = new ImageIcon(imageURL).getImage();
+        if (imageURL != null) {
+            moonImage = new ImageIcon(imageURL).getImage();
+        } else {
+            throw new RuntimeException("ImageURL null");
+        }
+
         
         //Loads a secret image... shush!
+        String secretImgName = "secret";
         url = rh.getString(secretImgName);
         imageURL = getClass().getClassLoader().getResource(url);
-        secretImage = new ImageIcon(imageURL).getImage();
-
+        if (imageURL != null) {
+            secretImage = new ImageIcon(imageURL).getImage();
+        } else {
+            throw new RuntimeException("ImageURL null");
+        }
 
         model = SixteenBitModel.getInstance();
         canvas = model.getCanvas();
@@ -141,6 +171,7 @@ public class MyGlassPane extends JPanel {
         createGraphics();
 
         //Sets the font
+        int fontSize = 12;
         font = new Font("Arial", Font.BOLD, fontSize);
 
         //Create a button so the user can perform an action during the help system tour
@@ -209,7 +240,7 @@ public class MyGlassPane extends JPanel {
         buttonCancel.setVisible(false);
         button.setVisible(false);
         buttonOk.setVisible(false);
-        model.getAnimationEngine().stop(null);
+        model.getAnimationEngine().stopHelpSystem();
         rotationInstruction = null;
         moveInstruction = null;
         popupInstruction = null;
@@ -226,38 +257,40 @@ public class MyGlassPane extends JPanel {
      */
     public void passInstruction(Instruction instruction) {
         //The instruction is a rotate instruction
-        if (instruction.getCommand().equals(Instruction.ROTATE)) {
-            this.rotationInstruction = instruction;
-        } //The instruction is a move instruction
-        else if (instruction.getCommand().equals(Instruction.MOVE)) {
-            this.moveInstruction = instruction;
-        } //The instruction brings up a popup
-        else if (instruction.getCommand().equals(Instruction.POPUP)) {
-            this.popupInstruction = instruction;
-        } //The instruction will make the animation wait for user input
-        else if (instruction.getCommand().equals(Instruction.USERINPUT)) {
-            model.getAnimationEngine().runInstruction(false);
-            //removes the last action listener
-            button.removeActionListener(action);
-            if (instruction.getObject().equals("HELP")) {
-                //It doesn't make sense to start another helpsystem
-                //when it is already running.
-                button.setEnabled(false);
-            } else {
-                action = new Action(instruction.getObject());
-                //Adds the new action listener
-                button.addActionListener(action);
-                //Makes sure the button is usable
-                button.setEnabled(true);
-            }
-        } //This is the start instruction, that is the very first instruction
-        else if (instruction.getCommand().equals(Instruction.START_INSTRUCTION)) {
-            menubar.setEnabled(false);
-            runInstruction = true;
-            buttonCancel.setVisible(true);
-        } //This is the stop instruction, tat is the very last instruction
-        else if (instruction.getCommand().equals(Instruction.STOP_INSTRUCTION)) {
-            stopInstruction();
+        switch (instruction.getCommand()) {
+            case Instruction.ROTATE:
+                this.rotationInstruction = instruction;
+                break;
+            case Instruction.MOVE:
+                this.moveInstruction = instruction;
+                break;
+            case Instruction.POPUP:
+                this.popupInstruction = instruction;
+                break;
+            case Instruction.USERINPUT:
+                model.getAnimationEngine().runInstruction(false);
+                //removes the last action listener
+                button.removeActionListener(action);
+                if (instruction.getObject().equals("HELP")) {
+                    //It doesn't make sense to start another helpsystem
+                    //when it is already running.
+                    button.setEnabled(false);
+                } else {
+                    action = new Action(instruction.getObject());
+                    //Adds the new action listener
+                    button.addActionListener(action);
+                    //Makes sure the button is usable
+                    button.setEnabled(true);
+                }
+                break;
+            case Instruction.START_INSTRUCTION:
+                menubar.setEnabled(false);
+                runInstruction = true;
+                buttonCancel.setVisible(true);
+                break;
+            case Instruction.STOP_INSTRUCTION:
+                stopInstruction();
+                break;
         }
     }
 
@@ -273,7 +306,9 @@ public class MyGlassPane extends JPanel {
 
         //Checks if the current running operating system is something other than mac.
         //Then the menubar and contentpane will both be "replaced" by a screen capture
-        if (!OsUtils.isMac() && image != null && menuImage != null && runInstruction) {
+        int imgX = 0;
+        int imgY = 0;
+        if (OsUtils.isNotMac() && image != null && menuImage != null && runInstruction) {
             g2.drawImage(menuImage, imgX, imgY, this);
             g2.drawImage(image, imgX, imgY + menuImage.getHeight(), this);
         } //Else just the content pane will be replaced by a screen capture
@@ -381,7 +416,7 @@ public class MyGlassPane extends JPanel {
     private void drawPopup(Graphics g) {
         Point p = popupInstruction.getLocation();
         String message = popupInstruction.getMessage();
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         String string = "";
         String tempString;
         String token;
@@ -473,7 +508,7 @@ public class MyGlassPane extends JPanel {
         g2.translate(xPos + spacing, yPos + fm.getHeight());
         for (int i = 0; i < list.size(); i++) {
             //Draw all lines of text on different rows
-            g2.drawString(list.get(i), 0 + spacing, 0 + i * fm.getHeight() + lineSpacing);
+            g2.drawString(list.get(i), spacing, i * fm.getHeight() + lineSpacing);
         }
         //Translate back
         g2.translate(-(xPos + spacing), -(yPos + fm.getHeight()));
@@ -490,7 +525,7 @@ public class MyGlassPane extends JPanel {
     private void createGraphics() {
         int xPos;
         int yPos;
-        if (!OsUtils.isMac()) {
+        if (OsUtils.isNotMac()) {
             yPos = frame.getHeight() - 38;
         } else {
             yPos = frame.getHeight() - 22;
@@ -596,7 +631,7 @@ public class MyGlassPane extends JPanel {
         //Mouse events are not dispatched
         if (!state) {
             //Adds mouselistener so the events will be blocked
-            mouse = new MouseAdapter(this);
+            MouseAdapter mouse = new MouseAdapter(this);
             addMouseListener(mouse);
             addMouseMotionListener(mouse);
         } else {
@@ -619,10 +654,10 @@ public class MyGlassPane extends JPanel {
      */
     private class MouseAdapter extends MouseInputAdapter {
 
-        private MyGlassPane glassPane;
+        private final MyGlassPane glassPane;
         private final JMenuBar menubar;
 
-        public MouseAdapter(MyGlassPane glassPane) {
+        MouseAdapter(MyGlassPane glassPane) {
             this.glassPane = glassPane;
             menubar = menu.getMenuBar();
         }
@@ -714,7 +749,7 @@ public class MyGlassPane extends JPanel {
                                 component,
                                 me.getID(),
                                 me.getWhen(),
-                                me.getModifiers(),
+                                me.getModifiersEx(),
                                 componentPoint.x,
                                 componentPoint.y,
                                 me.getClickCount(),
@@ -735,7 +770,7 @@ public class MyGlassPane extends JPanel {
                         canvas,
                         me.getID(),
                         me.getWhen(),
-                        me.getModifiers(),
+                        me.getModifiersEx(),
                         canvasPoint.x,
                         canvasPoint.y,
                         me.getClickCount(),
@@ -754,7 +789,7 @@ public class MyGlassPane extends JPanel {
       */
     private class GlassAction extends AbstractAction {
 
-        public GlassAction() {
+        GlassAction() {
         }
 
         @Override

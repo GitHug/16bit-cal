@@ -1,11 +1,7 @@
 package View;
 
-import Control.Actions.AnimationEvent;
-import Control.Actions.DeSelectEvent;
-import Control.Actions.SelectedEvent;
-import Control.Actions.UpdateEvent;
+import Control.Actions.*;
 import Model.Datatypes.BorderImage;
-import Model.SixteenBitModel;
 
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -21,28 +17,13 @@ import java.awt.geom.Rectangle2D;
 public class DayCard extends CustomComponent {
 
     private String text;
-    private Color currentColor;
     private BorderImage defaultBorder = new BorderImage("beam");
-    //private JButton button = new JButton();
-    private Point p;
-    private Dimension d;
-    private boolean isSelected;
     private int fontSize = 12;
-    private SixteenBitModel model;
     private Color textColor = Color.DARK_GRAY;
-    private boolean showBorder = true;
     private boolean borderVisible = true;
-    private BorderImage currentBorder;
     private ActionListener action;
     private Font font;
-    private int alpha = 0;
-    private boolean done = false;
-    private String[] fontFamilies;
-    private int offset = 5;
-    private int increase = 1;
-    private Color whitePulse = new Color(255, 255, 255);
     private Color pulseColor = new Color(255, 255, 255, 0);
-    private boolean selectable = true;
 
     /**
      * Constructor to create a daycard containing a string.
@@ -60,11 +41,9 @@ public class DayCard extends CustomComponent {
         setBackgroundColor(Color.lightGray);
         setBorderByName(defaultBorder);
         setId(id);
-        model = SixteenBitModel.getInstance();
 
         //Gets available fonts and sets a font
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        fontFamilies = ge.getAvailableFontFamilyNames();
+        GraphicsEnvironment.getLocalGraphicsEnvironment();
         font = new Font("Arial", Font.BOLD, fontSize);
     }
 
@@ -75,12 +54,11 @@ public class DayCard extends CustomComponent {
      * @see BorderImage
      */
     private void setBorderByName(BorderImage border) {
-        currentBorder = border;
         setBorderType(border);
     }
 
     @Override
-    public void notify(Object arg) {
+    public void notify(CalendarEvent arg) {
         if (arg instanceof SelectedEvent) {
             setSelected((SelectedEvent) arg);
         }
@@ -90,7 +68,7 @@ public class DayCard extends CustomComponent {
         if(arg instanceof AnimationEvent) {
             AnimationEvent event = (AnimationEvent) arg;
             if(event.getId() == getId()) {
-                animate(event.getState(), event.getColor());
+                animate(event.getColor());
             }
         }
         if(arg instanceof DeSelectEvent) {
@@ -115,7 +93,7 @@ public class DayCard extends CustomComponent {
      * @param event A selected event.
      */
     private void setSelected(SelectedEvent event) {
-        int selectedId = (Integer) event.getId();
+        int selectedId = event.getId();
         if (getId() == selectedId && !getSelected()) {
             isSelected(true);
         }
@@ -127,12 +105,12 @@ public class DayCard extends CustomComponent {
      * @param event An update event.
      */
     private void updateDayCard(UpdateEvent event) {
-        int selectedId = (Integer) event.getId();
+        int selectedId = event.getId();
         if (getId() == selectedId) {
             text = event.getString();
             textColor = event.getTextColor();
-            showBorder = event.getShowBorder();
-            selectable = event.getSelectable();
+            boolean showBorder = event.getShowBorder();
+            boolean selectable = event.getSelectable();
             setSelectable(selectable);
             if (borderVisible && !showBorder) {
                 setBorderType(null);
@@ -148,7 +126,7 @@ public class DayCard extends CustomComponent {
     /**
      * Sets the default border for the daycard.
      *
-     * @param border
+     * @param border border name
      */
     public void setDefaultBorder(String border) {
         defaultBorder = new BorderImage(border);
@@ -162,8 +140,8 @@ public class DayCard extends CustomComponent {
     @Override
     public void draw(Graphics g) {
         super.paintComponents(g);
-        p = getLocation();
-        d = getSize();
+        Point p = getLocation();
+        Dimension d = getSize();
         Graphics2D g2d = (Graphics2D) g;
         
         //Create a rectangle
@@ -193,8 +171,7 @@ public class DayCard extends CustomComponent {
     }
 
 
-    @Override
-    protected void animate(Boolean state, Color color) {
+    private void animate(Color color) {
         pulseColor = color;
        /* if (state) {
             if ((alpha + offset > 255 && increase > 0) || (alpha - offset < 0 && increase < 0)) {
@@ -224,6 +201,6 @@ public class DayCard extends CustomComponent {
         
         }
     
-    } 
+    }
 }
 

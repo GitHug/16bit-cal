@@ -11,7 +11,7 @@ public class UndoRedoManager {
     // the current index node
     private Node currentIndex = null;
     // the present node far left node
-    private Node parentNode = new Node();
+    private final Node parentNode = new Node();
     
     /**
      * Creates a new UndoRedoManager object which is from the start empty
@@ -20,26 +20,7 @@ public class UndoRedoManager {
     {
         currentIndex = parentNode;
     }
-    
-   /**
-    * Creates a new UndoRedoManager which is a duplicate of the parameter in both
-    * contents and current index.
-    * @param manager 
-    */
-    public UndoRedoManager(UndoRedoManager manager)
-    {
-        this();
-        currentIndex = manager.currentIndex;
-    }
-    
-    /**
-     * Clears all actions contained in the manager
-     */
-    public void clear()
-    {
-        currentIndex = parentNode;
-    }
-    
+
     /**
      * Adds an action to the manager
      * @param undoredo the undoredo object to be added
@@ -76,19 +57,22 @@ public class UndoRedoManager {
      */    
     public void undo()
     {
-        if ( !canUndo() )
+        if ( !canUndo())
         {
             throw new IllegalStateException("Cannot undo. Index is out of range");
         }
-        currentIndex.undoredo.undo();
+
+        if (currentIndex != null && currentIndex.undoredo != null) {
+            currentIndex.undoredo.undo();
+        }
         moveLeft();
     }
     
     /**
      * Moves the internal pointer of the backed linked list to the left.
      * @throws IllegalStateException if the left index is null
-     */    
-    public void moveLeft()
+     */
+    private void moveLeft()
     {
         if ( currentIndex.left == null ) 
         {
@@ -99,8 +83,8 @@ public class UndoRedoManager {
     
     /**
      * Moves the internal pointer of the backed linked list to the right.
-     */    
-     public void moveRight()
+     */
+    private void moveRight()
     {
         if ( currentIndex.right == null ) 
         {
@@ -121,7 +105,9 @@ public class UndoRedoManager {
         }
         
         moveRight();
-        currentIndex.undoredo.redo();
+         if (currentIndex != null && currentIndex.undoredo != null) {
+             currentIndex.undoredo.redo();
+         }
         
      }
      
@@ -140,7 +126,7 @@ public class UndoRedoManager {
          * Constructor
          * @param c the current undoredo object in the node
          */
-        public Node(UndoRedo c)
+        Node(UndoRedo c)
         {
             undoredo = c;
         }
@@ -148,7 +134,7 @@ public class UndoRedoManager {
         /**
          * Constructor where the node is empty
          */
-        public Node()
+        Node()
         {
             undoredo = null;
         }

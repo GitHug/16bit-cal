@@ -5,45 +5,19 @@
 
 package Model.Datatypes;
 
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * Class that defines a month for a daycard
  * @author fredrikmakila
  */
 public class Month {
-    String month;
-    private String[] months = {
-        "January", "February", "March", "April", "May", "June", "July", "August",
-        "September", "October", "November", "December"
-    };
-    private List lst = Arrays.asList(months);
-    
-    /**
-     * Constructor.
-     * @param month The month
-     */
-    public Month(String month){
-        if(lst.contains(month)) {
-            this.month = month;
-        }
-        else {
-            try {
-                throw new NotAMonthException(month + " is not a valid month");
-            } 
-            catch (NotAMonthException ex) {
-                System.err.println(ex);
-            }
-        }
-    }
-    
+    private String month;
+
     /**
      * Constructor.
      * @param monthNumber The month as an integer
      */
     public Month(int monthNumber){
-        String monthString;
+
         switch (monthNumber) {
             case 0: month = "January";
                     break;
@@ -73,7 +47,7 @@ public class Month {
                         throw new NotAMonthException(month + " is not a valid month");
                      } 
                      catch (NotAMonthException ex) {
-                        System.err.println(ex);
+                         ex.printStackTrace();
                      }
                      break;
         }
@@ -95,17 +69,11 @@ public class Month {
     private class NotAMonthException extends Exception{
             
             /**
-             * Empty constructor to be able to cast the exception without a message.
-             */
-            public NotAMonthException() {   
-            }
-            
-            /**
              * Constructor that takes a description. 
              * The description can give the user more information on what went wrong
              * @param description a message to be shown
              */
-            public NotAMonthException(String description) {
+            NotAMonthException(String description) {
                 super(description);
             }
         }

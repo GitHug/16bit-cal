@@ -9,10 +9,10 @@ import java.awt.*;
  * The graphical representation of an event to be shown inside the DayView
  * @author Robin Horneman
  */
-public class EventPanel extends JPanel{
+class EventPanel extends JPanel{
     
     /*Private Variables*/
-    private EventObject event;
+    private final EventObject event;
     
     /*Constructors*/
     /**
@@ -25,22 +25,8 @@ public class EventPanel extends JPanel{
     }
     
     /*Setters*/
-    /**
-     * Changes the associated event
-     * @param event the new event
-     */
-    public void setEvent(EventObject event) {
-        this.event = event;
-    }
     
     /*Getters*/
-    /**
-     * Returns the associated event
-     * @return this panel´s event
-     */
-    public EventObject getEvent() {
-        return event;
-    }
 
     /*Others*/
     /**

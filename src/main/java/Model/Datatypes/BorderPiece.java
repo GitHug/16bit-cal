@@ -14,14 +14,8 @@ import java.util.List;
  */
 public class BorderPiece {
         private String piece = null;
-        String[] pieces = {
-            "top_left", "top_center", "top_right", 
-            "left_center", "right_center",
-            "bottom_left", "bottom_center", "bottom_right"
-        };
-        List lst = Arrays.asList(pieces);
-        
-        /**
+
+    /**
          * Constructor. 
          * A border piece is a String with one of the following values:
          * <ul>
@@ -38,6 +32,12 @@ public class BorderPiece {
          * @param piece A piece of the border
          */
         public BorderPiece(String piece) {
+            String[] pieces = {
+                    "top_left", "top_center", "top_right",
+                    "left_center", "right_center",
+                    "bottom_left", "bottom_center", "bottom_right"
+            };
+            List lst = Arrays.asList(pieces);
             if(lst.contains(piece)) {
                 this.piece = piece;
             }
@@ -46,7 +46,7 @@ public class BorderPiece {
                     throw new NotABorderPieceException(piece + " is not a border piece");
                 } 
                 catch (NotABorderPieceException ex) {
-                    System.err.println(ex);
+                    ex.printStackTrace();
                 }
             }
         }
@@ -66,18 +66,13 @@ public class BorderPiece {
          * is the input to the BorderPiece constructor
          */
         private class NotABorderPieceException extends Exception{
-            /**
-             * Empty constructor to be able to cast the exception without a message.
-             */
-            public NotABorderPieceException() { 
-            }
             
             /**
              * Constructor that takes a description. 
              * The description can give the user more information on what went wrong
              * @param description a message to be shown
              */
-            public NotABorderPieceException(String description) {
+            NotABorderPieceException(String description) {
                 super(description);
             }
         }

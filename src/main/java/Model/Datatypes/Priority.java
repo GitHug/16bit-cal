@@ -14,24 +14,20 @@ import java.util.List;
  */
 public class Priority {
         private String prio = null;
-        String[] priorities = {
-            "low", "normal", "high"
-        };
-        /**
+    /**
         *  Creates a priority item "low". 
         */
-        public static Priority LOW = new Priority("low");
+        public static final Priority LOW = new Priority("low");
         /**
         *  Creates a priority item "medium". 
         */
-        public static Priority NORMAL = new Priority("normal");
+        public static final Priority NORMAL = new Priority("normal");
         /**
         *  Creates a priority item "high". 
         */
-        public static Priority HIGH = new Priority("high");
-        List lst = Arrays.asList(priorities);
-        
-        /**
+        public static final Priority HIGH = new Priority("high");
+
+    /**
          * Constructor.
          * This constructor creates a priority given the input String prio. A
          * priority can have the value low, normal or high. If another value other 
@@ -39,6 +35,10 @@ public class Priority {
          * @param prio The priority of a task
          */
         public Priority(String prio) {
+            String[] priorities = {
+                    "low", "normal", "high"
+            };
+            List lst = Arrays.asList(priorities);
             if(lst.contains(prio.toLowerCase())) {
                 this.prio = prio.toLowerCase();
             }
@@ -47,7 +47,7 @@ public class Priority {
                     throw new NotAPriorityException(prio + " is not a valid priority");
                 } 
                 catch (NotAPriorityException ex) {
-                    System.err.println(ex);
+                    ex.printStackTrace();
                 }
             }
         }
@@ -67,8 +67,11 @@ public class Priority {
          */
         @Override
         public boolean equals(Object obj) {
-            Priority priority = (Priority) obj;
-            return priority.toString().equals(prio);
+            if (obj instanceof Priority) {
+                Priority priority = (Priority) obj;
+                return priority.toString().equals(prio);
+            }
+            return false;
         }
 
 
@@ -81,17 +84,11 @@ public class Priority {
         private class NotAPriorityException extends Exception{
             
             /**
-             * Empty constructor to be able to cast the exception without a message.
-             */
-            public NotAPriorityException() {   
-            }
-            
-            /**
              * Constructor that takes a description. 
              * The description can give the user more information on what went wrong
              * @param description a message to be shown
              */
-            public NotAPriorityException(String description) {
+            NotAPriorityException(String description) {
                 super(description);
             }
         }

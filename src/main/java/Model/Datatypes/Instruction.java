@@ -131,12 +131,8 @@ public class Instruction {
     private final String message;
     private final boolean display;
     private final boolean alignment;
-    
-    
-    
-    
-      /******** CONSTRUCTORS ***********************************************/
-    
+
+
     /**
      * Constructor for this class. 
      * Primarily designed for use when you want to move an object
@@ -196,9 +192,7 @@ public class Instruction {
         this.display = display;
         this.alignment = alignment;
     }
-    
-    /******** GETTERS ****************************************************/
-    
+
     /**
      * Gets wheter the popup should be visible or not
      * @return the current display value

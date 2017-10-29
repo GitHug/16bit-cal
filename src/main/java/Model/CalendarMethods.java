@@ -18,7 +18,7 @@ public class CalendarMethods {
     /**
      * Empty constructor for this class.
      */
-    public CalendarMethods() {    
+    protected CalendarMethods() {
     }
     /**
      * Returns the first week day for a given month. 
@@ -28,7 +28,7 @@ public class CalendarMethods {
      * @param year A year
      * @return The first weekday for a given month.
      */
-    public int getWeekDay(int year, int month) {
+    protected int getWeekDay(int year, int month) {
         Calendar cal = new GregorianCalendar(year, month, 1);
         //Day of week has the week start on sunday, but any sane person
         //has the wee starting on monday. That's why this is added. Also for some
@@ -44,20 +44,18 @@ public class CalendarMethods {
      * Gets the current year. 
      * @return The current year.
      */
-    public int getYear() {
+     protected int getYear() {
         Calendar cal = new GregorianCalendar();
-        int y = cal.get(Calendar.YEAR);
-        return y;
+         return cal.get(Calendar.YEAR);
     }
     
      /**
      * Gets the current day. 
      * @return The current day number this month. 
      */
-    public int getDay() {
+     protected int getDay() {
         Calendar cal = new GregorianCalendar();
-        int d = cal.get(Calendar.DAY_OF_MONTH);
-        return d;
+         return cal.get(Calendar.DAY_OF_MONTH);
     }
     
     /**
@@ -66,7 +64,7 @@ public class CalendarMethods {
      * @param month The month to be checked
      * @return The number of days in a month
      */
-    public int getNumberOfDays(int year, int month) {
+    protected int getNumberOfDays(int year, int month) {
         int days;
         Calendar cal = new GregorianCalendar(year, month, 1);
         days = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
@@ -77,10 +75,9 @@ public class CalendarMethods {
      * Returns the current month.
      * @return the current month.
      */
-    public int getMonth() {
+    protected int getMonth() {
         Calendar cal = new GregorianCalendar();
-        int m = cal.get(Calendar.MONTH);
-        return m;
+        return cal.get(Calendar.MONTH);
     }
     
     /**
@@ -91,7 +88,7 @@ public class CalendarMethods {
      * @param year The year for which to get the weeknumbers for a given month.
      * @return An array containg the week numbers. 
      */
-    public ArrayList<Integer> getWeekNumber(int year, int month) {
+    protected ArrayList<Integer> getWeekNumber(int year, int month) {
         //Creates a new calendar at the date 1
         Calendar cal = new GregorianCalendar(year, month, 1);
         //Sets the first day of the week to monday
@@ -111,7 +108,7 @@ public class CalendarMethods {
         int last = lastWeek.get(Calendar.WEEK_OF_YEAR);
 
         //Creates an empty integer list that later can be filled 
-        ArrayList<Integer> array = new ArrayList<Integer>();
+        ArrayList<Integer> array = new ArrayList<>();
 
         //If the last week of the month is same as the last week of this year
         if(end == last) {

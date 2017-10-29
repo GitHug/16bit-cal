@@ -17,7 +17,7 @@ public final class OsUtils {
      * Gets the os name
      * @return the name of the os.
      */
-    public static String getOsName() {
+    private static String getOsName() {
         if (OS == null) {
             OS = System.getProperty("os.name");
         }
@@ -31,20 +31,13 @@ public final class OsUtils {
     public static boolean isWindows() {
         return getOsName().startsWith("Windows");
     }
-    
-    /**
-     * Gets the os name
-     * @return unix if its unix.
-     */
-    public static boolean isUnix() {
-        return getOsName().startsWith("Unix");
-    }
+
     
     /**
      * Gets the os name
      * @return mac if its mac.
      */
-    public static boolean isMac() {
-        return getOsName().startsWith("Mac");
+    public static boolean isNotMac() {
+        return !getOsName().startsWith("Mac");
     }
 }

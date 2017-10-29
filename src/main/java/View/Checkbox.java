@@ -4,6 +4,7 @@
  */
 package View;
 
+import Control.Actions.CalendarEvent;
 import Control.Actions.DeSelectEvent;
 import Control.Actions.SelectedEvent;
 import Model.Database.ResourceHandler;
@@ -21,67 +22,21 @@ import java.net.URL;
  * @author Robert
  */
 public class Checkbox extends CustomComponent {
-    
-    private ResourceHandler rh;
-    private String url;
-    private URL imageURL;
+
     private Image img;
     private Image selectedImg;
     private ActionListener action;
-    private boolean isSelected = false;    
-    private Point p;
-    private Dimension d;
+    private boolean isSelected = false;
     private int textWidth = 0;
-    private int textHeight = 0;
-    private int height = 0;
-    private int xPos;
-    private int yPos;
-    private String label;
-    private Font font;
+    private final String label;
+    private final Font font;
     private boolean first = true;
     private boolean labeled = false;
-    
-    
-    /**
-     * Constuctor to create a checkbox.
-     *
-     * @param x The x position of the checkbox
-     * @param y The y position of the checkbox
-     * @param id The id of the checkbox
-     */
-    public Checkbox(int x, int y, int id) {
-        super(x, y);
-        setId(id);
-        rh = new ResourceHandler();
-        
-        //Load unchecked image
-        try {
-            url = rh.getString("checkbox_unchecked");
-            imageURL = getClass().getClassLoader().getResource(url);
-            img = new ImageIcon(imageURL).getImage();
-        } catch (Exception e) {
-            System.err.println(e);
-        }
-        
-        //Load checked image
-        try {
-            url = rh.getString("checkbox_checked");
-            imageURL = getClass().getClassLoader().getResource(url);
-            selectedImg = new ImageIcon(imageURL).getImage();
-        } catch (Exception e) {
-            System.err.println(e);
-        }
-        
-        
-        
-        //Set dimentions and bound for checkbox
-        setSize(new Dimension(img.getWidth(null), img.getHeight(null)));
-        setBounds(x, y, img.getWidth(null), img.getHeight(null));
+    @SuppressWarnings({"unused", "FieldCanBeLocal"})
+    private int selectedId;
 
-    }
-    
-    
-     /**
+
+    /**
      * Constuctor to create a checkbox.
      *
      * @param x The x position of the checkbox
@@ -93,30 +48,38 @@ public class Checkbox extends CustomComponent {
         super(x, y);
         setId(id);
         label = text;
-        rh = new ResourceHandler();
+        ResourceHandler rh = new ResourceHandler();
         labeled = true;
         
         //Load unchecked image
+        URL imageURL;
+        String url;
         try {
             url = rh.getString("checkbox_unchecked");
             imageURL = getClass().getClassLoader().getResource(url);
+            if (imageURL == null) {
+                throw new Exception("imageURL null");
+            }
             img = new ImageIcon(imageURL).getImage();
         } catch (Exception e) {
-            System.err.println(e);
+            e.printStackTrace();
         }
         
         //Load checked image
         try {
             url = rh.getString("checkbox_checked");
             imageURL = getClass().getClassLoader().getResource(url);
+            if (imageURL == null) {
+                throw new Exception("imageURL null");
+            }
             selectedImg = new ImageIcon(imageURL).getImage();
         } catch (Exception e) {
-            System.err.println(e);
+            e.printStackTrace();
         }
         
         //Gets a font from the current system and sets the font size
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        String[] fontFamilies = ge.getAvailableFontFamilyNames();
+        ge.getAvailableFontFamilyNames();
         font = new Font("Arial", Font.BOLD, 12);
         
         //Set Bounds
@@ -131,14 +94,14 @@ public class Checkbox extends CustomComponent {
     public void addActionListener(ActionListener action) {
         this.action = action;
     }
-    
+
     /**
      * Method that is called when the checkbox is clicked on.
      *
      * @param event A selected event.
      */
     private void setSelected(SelectedEvent event) {
-        int selectedId = (Integer) event.getId();
+        this.selectedId = event.getId();
     }
     
     @Override
@@ -154,7 +117,7 @@ public class Checkbox extends CustomComponent {
      */
     private void setDeSelected(DeSelectEvent event) {
         ActionEvent actionEvent;
-        int id = (Integer) event.getId();
+        int id = event.getId();
         if (id == getId()) {
             isSelected = !isSelected;
             if(isSelected) {
@@ -168,7 +131,7 @@ public class Checkbox extends CustomComponent {
     }
 
     @Override
-    public void notify(Object arg) {
+    public void notify(CalendarEvent arg) {
         if (arg instanceof SelectedEvent) {
             setSelected((SelectedEvent) arg);
         }
@@ -179,14 +142,15 @@ public class Checkbox extends CustomComponent {
     
     @Override
     public void draw(Graphics g) {
-        p = getLocation();
-        
+        Point p = getLocation();
+
+        Dimension d;
         if (labeled) {
             if (first) {
                 g.setFont(font);
                 textWidth = g.getFontMetrics().stringWidth(label);
-                textHeight = g.getFontMetrics().getHeight();        
-                height = img.getHeight(null);    
+                int textHeight = g.getFontMetrics().getHeight();
+                int height = img.getHeight(null);
                 
                 if (textHeight > height) height = textHeight;
                 
@@ -243,14 +207,4 @@ public class Checkbox extends CustomComponent {
     }
 
 
-    /**
-     * Not implemented
-     * @param state Not implementd
-     * @param color Not implemented
-     */
-    @Override
-    protected void animate(Boolean state, Color color) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-    
 }

@@ -15,10 +15,7 @@ import java.util.logging.Logger;
  * Creates the maincontroller which starts up everything
  * @author Group 6
  */
-public class Main {
-    private static Canvas canvas;
-    private MenuBar menubar;
-    
+class Main {
 
 
     /**
@@ -32,20 +29,14 @@ public class Main {
             System.setProperty("apple.laf.useScreenMenuBar", "true");
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", "16 Bit Calendar");
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException ex) {
+        } catch (ClassNotFoundException | UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (UnsupportedLookAndFeelException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        } 
+        }
         SixteenBitModel model = SixteenBitModel.getInstance();
         AnimationEngine animation = new AnimationEngine();
         model.setAnimationEngine(animation);
         
-        ComponentLoader cl = new ComponentLoader();
+        new ComponentLoader();
         animation.setDayCardList();
 
         model.fillModel();
@@ -66,7 +57,7 @@ public class Main {
         
           f.addWindowListener (new WindowAdapter() {
               
-            SixteenBitModel model = SixteenBitModel.getInstance();
+            final SixteenBitModel model = SixteenBitModel.getInstance();
             /**
             * Listener that stores frame size and position and shut down application on window close.
             */
@@ -76,8 +67,8 @@ public class Main {
                 System.exit(0);
             }
         });
-        
-        canvas = new Canvas(cl.get());
+
+        Canvas canvas = new Canvas();
         model.setCanvas(canvas);
         MyGlassPane myGlassPane = new MyGlassPane();
         model.setGlassPane(myGlassPane);

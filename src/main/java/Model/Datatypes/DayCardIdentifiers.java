@@ -15,18 +15,17 @@ public class DayCardIdentifiers {
     /****************PRIVATE VARIABLES *****************/
 
     private int monthCardId;
-    private ArrayList<Integer> weekDayCardIds = new ArrayList<Integer>();
-    private ArrayList<Integer> weekCardIds = new ArrayList<Integer>();
-    private ArrayList<CardStuffList> dayCardIds = new ArrayList<CardStuffList>();
+    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
+    private final ArrayList<Integer> weekDayCardIds = new ArrayList<>();
+    private final ArrayList<Integer> weekCardIds = new ArrayList<>();
+    private final ArrayList<CardStuffList> dayCardIds = new ArrayList<>();
     
     /****************CONSTRUCTOR*****************/
     public DayCardIdentifiers() {
         
     }
-    
-    /****************SETTERS*****************/
 
-    
+
     /** 
      * Sets the monthcard ID 
      * @param dcId the monthcard ID. 
@@ -58,23 +57,13 @@ public class DayCardIdentifiers {
     public void addDayCard(CardStuffList csl) {
         dayCardIds.add(csl);
     }
-    
-    /****************GETTERS*****************/
 
-    /** 
+    /**
      * gets the monthcard ID 
      * @return month card ID.
      */
     public int getMonthCardId() {
         return monthCardId;
-    }
-    
-    /** 
-     * gets the weekday cards ID 
-     * @return weekday cards ID.
-     */
-    public ArrayList<Integer> getWeekDayCardIds() {
-        return weekDayCardIds;
     }
     
      /** 
@@ -90,9 +79,9 @@ public class DayCardIdentifiers {
      * @return a list of daycards ID.
      */
     public ArrayList<Integer> getDayCardIds() {
-        ArrayList<Integer> list = new ArrayList<Integer>();
-        for(int i = 0; i < dayCardIds.size(); i++) {
-            list.add(dayCardIds.get(i).getDayCardId());
+        ArrayList<Integer> list = new ArrayList<>();
+        for (CardStuffList dayCardId : dayCardIds) {
+            list.add(dayCardId.getDayCardId());
         }
         return list;
     }

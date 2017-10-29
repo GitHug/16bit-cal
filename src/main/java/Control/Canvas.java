@@ -15,16 +15,10 @@ import java.util.ArrayList;
  */
 @SuppressWarnings("unchecked")
 public class Canvas extends JPanel {
-    private ArrayList<Drawable> list = new ArrayList<Drawable>();
-    private ArrayList<Drawable> paintList = new ArrayList<Drawable>();
-    private ArrayList<Drawable> dcList = new ArrayList<Drawable>();
-    private int daycardCount;
-    private Drawable drawable;
-    private SixteenBitModel model;
+    private ArrayList<Drawable> list = new ArrayList<>();
+    private final SixteenBitModel model;
     private int id = 0;
-    long startTime;
-    long endTime;
-    private AnimationEngine animation;
+    private final AnimationEngine animation;
     private boolean within = false;
     private int index;
     private boolean canClick = true;
@@ -34,9 +28,8 @@ public class Canvas extends JPanel {
     
     /**
      * Simple constructor.
-     * @param args 
      */
-    public Canvas(ArrayList ... args){
+    public Canvas(){
         setFocusable(true);
         /*for(int i = 0; i<args.length; i++) {
             list.addAll((ArrayList<Drawable>) args[i]);
@@ -49,7 +42,7 @@ public class Canvas extends JPanel {
         //Allow the Canvas to read the mouseclicks
         addMouseListener(new Mouse(this));
         addMouseMotionListener(new Mouse(this));
-        addComponentListener(new CanvasEventListener(this));
+        addComponentListener(new CanvasEventListener());
         
         animation = model.getAnimationEngine();
         //animation.startAnimatePrio();
@@ -62,38 +55,16 @@ public class Canvas extends JPanel {
      * A getter
      * @return Returns all Drawables on this Canvas as a list
      */
-    public ArrayList<Drawable> getList(){
+    private ArrayList<Drawable> getList(){
         return list;
     }
-    
-    /**
-     * Getter
-     * @return A list of all DayCards
-     */
-    public ArrayList<Drawable> getDayCardList() {
-        for(int i = 0; i < list.size(); i++) {
-            dcList.add(list.get(i));
-            System.out.println();
-        }
-        return dcList;
-    }
-    
-    /**
-     * Setter
-     * @param dim the new dimension of the canvas to be set in the model 
-     */
-    public void setSizeInModel(Dimension dim){
-       model.setCanvasSize(dim); 
-    }
-    
-            
         
     /**
      * Class that acts as a simple mouse listener with overridden methods
      */
-    public class Mouse implements MouseListener, MouseMotionListener
+    class Mouse implements MouseListener, MouseMotionListener
     {
-        private Canvas currentCanvas;
+        private final Canvas currentCanvas;
         
         
         
@@ -101,7 +72,7 @@ public class Canvas extends JPanel {
          * The constructor of a Mouse
          * @param can The Canvas associated to this mouselistener
          */
-        public Mouse(Canvas can){
+        Mouse(Canvas can){
             currentCanvas = can;
         }
         
@@ -116,9 +87,9 @@ public class Canvas extends JPanel {
                 Point p = new Point(e.getX(), e.getY()); //Get the location of the mouse
                 CustomComponent c;
                 ArrayList<Drawable> list = currentCanvas.getList();
-                for(int i =0; i<list.size(); i++){
-                    if(list.get(i).within(p)) {
-                        c = (CustomComponent) list.get(i);
+                for (Drawable aList : list) {
+                    if (aList.within(p)) {
+                        c = (CustomComponent) aList;
                         id = c.getId();
                         model.setSelected(id);
                     }
@@ -129,7 +100,7 @@ public class Canvas extends JPanel {
         
         /**
          * Not implemented.
-         * @param e
+         * @param e mouse event
          */
         @Override
         public void mouseClicked(MouseEvent e) {
@@ -137,7 +108,7 @@ public class Canvas extends JPanel {
 
         /**
          * This method fires when the Mouse is released
-         * @param e
+         * @param e mouse event
          */
         @Override
         public void mouseReleased(MouseEvent e) {
@@ -145,9 +116,9 @@ public class Canvas extends JPanel {
             CustomComponent c;
             Point p = e.getPoint();
             ArrayList<Drawable> list = currentCanvas.getList();
-            for(int i = 0; i < list.size(); i++) {
-                if(list.get(i).within(p)) {
-                    c = (CustomComponent) list.get(i);
+            for (Drawable aList : list) {
+                if (aList.within(p)) {
+                    c = (CustomComponent) aList;
                     if (c.getId() == id) {
                         model.setDeSelected(id);
                     }
@@ -158,7 +129,7 @@ public class Canvas extends JPanel {
 
         /**
          * Not implemented. Don't use this one.
-         * @param e
+         * @param e mouse event
          */
         @Override
         public void mouseEntered(MouseEvent e) {
@@ -166,7 +137,7 @@ public class Canvas extends JPanel {
 
         /**
          * Not implemented. Don't use this one.
-         * @param e
+         * @param e mouse event
          */
         @Override
         public void mouseExited(MouseEvent e) {}
@@ -182,18 +153,16 @@ public class Canvas extends JPanel {
         /**
          * Method that is called everytime the mouse enters
          * a component.
-         * @param e A mouse moved event
          */
-        private void mouseEnter(MouseEvent e, CustomComponent c) {
+        private void mouseEnter(CustomComponent c) {
             animation.start(c.getId());
             
         }
         
         /**
          * Method that is called everytime the mouse exits a component
-         * @param e A mouse event
          */
-        private void mouseExit(MouseEvent e, CustomComponent c) {
+        private void mouseExit() {
             animation.stop();
         }
        
@@ -214,12 +183,11 @@ public class Canvas extends JPanel {
                     index = i;
                     within = true;
                     c = (CustomComponent) list.get(i);
-                    mouseEnter(me, c);
+                    mouseEnter(c);
                 }
                 else if (!list.get(index).within(p) && within) {
                     within = false;
-                    c = (CustomComponent) list.get(index);
-                    mouseExit(me, c);
+                    mouseExit();
                 }
             }
            
@@ -233,25 +201,19 @@ public class Canvas extends JPanel {
      * A custom Event Listener that listens to changes in the Canvas
      * like resize of the window for example.
      */
-    public class CanvasEventListener extends ComponentAdapter {
-        private Canvas canvas;
+    class CanvasEventListener extends ComponentAdapter {
         
         /**
          * Constructor
-         * @param canvas the canvas it should listen to
          */
-        CanvasEventListener(Canvas canvas){
-            this.canvas = canvas;
-        }
+        CanvasEventListener(){ }
 
         /**
          * Fires when the canvas is resized.
          * @param e A component event
          */
         @Override
-        public void componentResized(ComponentEvent e) {
-            canvas.setSizeInModel(e.getComponent().getSize());
-        }
+        public void componentResized(ComponentEvent e) { }
 
         /**
          * Fires when the frame/canvas is moved.
@@ -300,12 +262,12 @@ public class Canvas extends JPanel {
     // Nya painComponent!!!!!!!!!!!!!!!!!???
     @Override
     public void paintComponent(Graphics g){
-        paintList = model.getPaintList();
+        ArrayList<Drawable> paintList = model.getPaintList();
         super.paintComponent(g);
         //this.setLayout(null);
-        for(int i =0; i<paintList.size(); i++) {
-            this.add((JPanel) paintList.get(i));
-            paintList.get(i).draw(g);
+        for (Drawable aPaintList : paintList) {
+            this.add((JPanel) aPaintList);
+            aPaintList.draw(g);
         }
     }
     

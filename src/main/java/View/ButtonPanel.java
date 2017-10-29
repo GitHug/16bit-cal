@@ -12,7 +12,7 @@ import java.awt.*;
  * Initiates the button panel in the bottom of the gui
  * @author Robert
  */
-public class ButtonPanel extends JPanel {
+class ButtonPanel extends JPanel {
     
     /**
     * Class constructor that initiates the button panel for the GUI

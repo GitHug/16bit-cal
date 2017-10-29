@@ -13,17 +13,11 @@ import java.awt.*;
  * Initiates the window where the user can view information about the application.
  * @author Kenny
  */
+@SuppressWarnings("MagicConstant")
 public class AboutWindow extends JFrame {
-    
-    private JLabel lbGroupName;
-    private JLabel lbFredrik;
-    private JLabel lbKenny;
-    private JLabel lbRobert;
-    private JLabel lbRobin;
-    private JLabel lbAbout;
-    
-    
- /**
+
+
+    /**
  * Class constructor for the About Window.
  */
     
@@ -50,7 +44,7 @@ public class AboutWindow extends JFrame {
         c.fill = GridBagConstraints.HORIZONTAL;
         
         // Label for info about the calendar and group
-        lbGroupName = new JLabel("A Calendar made by Group 6");
+        JLabel lbGroupName = new JLabel("A Calendar made by Group 6");
         Font f = lbGroupName.getFont();
         lbGroupName.setFont(f.deriveFont(f.getStyle() ^ Font.BOLD));
         c.gridx = 0;
@@ -59,35 +53,35 @@ public class AboutWindow extends JFrame {
         paneAdd.add(lbGroupName, c);
         
         // Label for group member names
-        lbFredrik  = new JLabel("  Fredrik Mäkilä");
+        JLabel lbFredrik = new JLabel("  Fredrik Mäkilä");
         c.gridx = 0;
         c.gridy = 2;
         c.gridwidth = 1;
         paneAdd.add(lbFredrik, c);
         
         // Label for group member names
-        lbKenny  = new JLabel("  Kenny Pussinen");
+        JLabel lbKenny = new JLabel("  Kenny Pussinen");
         c.gridx = 0;
         c.gridy = 3;
         c.gridwidth = 1;
         paneAdd.add(lbKenny, c);
         
         // Label for group member names
-        lbRobert  = new JLabel("  Robert Lööf");
+        JLabel lbRobert = new JLabel("  Robert Lööf");
         c.gridx = 0;
         c.gridy = 4;
         c.gridwidth = 1;
         paneAdd.add(lbRobert, c);
         
         // Label for group member names
-        lbRobin  = new JLabel("  Robin Horneman");
+        JLabel lbRobin = new JLabel("  Robin Horneman");
         c.gridx = 0;
         c.gridy = 5;
         c.gridwidth = 1;
         paneAdd.add(lbRobin, c);
         
         // Random Label
-        lbAbout  = new JLabel("Awsome");
+        JLabel lbAbout = new JLabel("Awsome");
         Font g = lbAbout.getFont();
         lbAbout.setFont(g.deriveFont(f.getStyle() ^ Font.BOLD));
         c.gridx = 0;

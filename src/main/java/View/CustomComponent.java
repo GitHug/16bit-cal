@@ -5,10 +5,10 @@
 
 package View;
 
+import Control.Actions.CalendarEvent;
 import Control.Interface.Drawable;
 import Control.Interface.Observer;
 import Model.Datatypes.BorderImage;
-import Model.SixteenBitModel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,8 +18,8 @@ import java.awt.*;
  * This class is mostly intended as a class from where other classes can inherit from. 
  * @author fredrikmakila
  */
-public abstract class CustomComponent extends JPanel implements Drawable, 
-        Observer {
+public abstract class CustomComponent extends JPanel implements Drawable,
+        Observer<CalendarEvent> {
     private Color color;
     private int stdX;
     private int stdY;
@@ -30,11 +30,8 @@ public abstract class CustomComponent extends JPanel implements Drawable,
     private int x;
     private int y;
     private boolean isSelected = false;
-    private Color currentColor;
     private int myId;
-    private SixteenBitModel model = SixteenBitModel.getInstance();
     private boolean isSelectable = true;
-
 
 
     @Override
@@ -43,10 +40,7 @@ public abstract class CustomComponent extends JPanel implements Drawable,
     @Override
     public boolean within(Point p) {
         Rectangle r = getBounds();
-        if(p.x >= r.x && p.x < r.x+r.width && p.y >= r.y && p.y < r.y+r.height && isSelectable) {
-            return true;
-        }
-        else return false;
+        return p.x >= r.x && p.x < r.x + r.width && p.y >= r.y && p.y < r.y + r.height && isSelectable;
         
     }
     
@@ -58,7 +52,7 @@ public abstract class CustomComponent extends JPanel implements Drawable,
      * @param width The width of the component
      * @param height The height of the component
      */
-    public CustomComponent(int x, int y, int width, int height) {
+    CustomComponent(int x, int y, int width, int height) {
         super();
         stdX = x;
         stdY = y;
@@ -74,7 +68,7 @@ public abstract class CustomComponent extends JPanel implements Drawable,
      * @param x The x-position of the components upper left corner.
      * @param y The y-position of the components upper left corner.
      */
-    public CustomComponent(int x, int y) {
+    CustomComponent(int x, int y) {
         super();
         this.x = x;
         this.y = y;
@@ -95,7 +89,7 @@ public abstract class CustomComponent extends JPanel implements Drawable,
      * Sets the id for the component.
      * @param id The new id for the component. 
      */
-    public void setId(int id) {
+    void setId(int id) {
         this.myId = id;
     }
     
@@ -129,7 +123,7 @@ public abstract class CustomComponent extends JPanel implements Drawable,
      * Gets the background color of this component.
      * @return The background color of this component. 
      */
-    public Color getBackgroundColor() {
+    Color getBackgroundColor() {
         return color;
     }
     
@@ -198,34 +192,28 @@ public abstract class CustomComponent extends JPanel implements Drawable,
      * Sets whether the component is selected or not
      * @param isSelected true if selected, otherwise false.
      */
-    protected void isSelected(Boolean isSelected) {
-        this.isSelected = isSelected;
+    void isSelected(Boolean isSelected) {
+        int selectedId = -1;
+        this.isSelected = isSelected && selectedId == getId();
     }
     
     /**
      * Gets whether the component is selected or not.
      * @return true if selected, otherwise false.
      */
-    public boolean getSelected() {
+    boolean getSelected() {
         return isSelected;
     }
     
     /**
      * Gets difference in position between the outside of the border and the inside.
-     * @return The offset position by the border
      */
-    public Point getOffsetLocation() {
-        return new Point(x-stdX, y-stdY);
+    public void getOffsetLocation() {
+        new Point(x - stdX, y - stdY);
     }
 
 
     @Override
-    public abstract void notify(Object event);
-    
-    /**
-     * Abstract method for subclasses to inherit from. 
-     * @param state Not implemented in this class.
-     * @param color Not implemented in this class.
-     */
-    protected abstract void animate(Boolean state, Color color);
+    public abstract void notify(CalendarEvent event);
+
 }

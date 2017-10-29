@@ -11,8 +11,9 @@ import Model.SixteenBitModel;
 import javax.swing.*;
 import java.awt.*;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Date;
 
 /**
@@ -24,32 +25,26 @@ public class AddEventWindow extends JFrame {
     
     private JTextField tfEventName;
     private JTextField tfEventInfo;
-    private JLabel lbEventName;
-    private JLabel lbEventInfo;
-    private JLabel lbEventCat;
-    private JLabel lbSTime;
-    private JLabel lbETime;
-    private DayCardWindow d;
-    private String[] stringarray = {"Standard"};
-    private DefaultComboBoxModel comboboxmodel = new DefaultComboBoxModel(stringarray);
-    private JComboBox combobox;
+    private final DayCardWindow d;
+    private final String[] stringarray = {"Standard"};
+    private final DefaultComboBoxModel<String> comboboxmodel = new DefaultComboBoxModel<>(stringarray);
+    private JComboBox<String> combobox;
     private JComboBox comboboxSH;
     private JComboBox comboboxSM;
     private JComboBox comboboxEH;
     private JComboBox comboboxEM;
-    private SixteenBitModel model = SixteenBitModel.getInstance();
-    private Date eTime;
-    private String[] hours = {
+    private final SixteenBitModel model = SixteenBitModel.getInstance();
+    private final String[] hours = {
         "00","01","02","03","04","05","06","07","08","09","10","11","12",
         "13","14","15","16","17","18","19","20","21","22","23"};
     
-    private String[] minutes = {
+    private final String[] minutes = {
         "00","01","02","03","04","05","06","07","08","09","10","11","12",
         "13","14","15","16","17","18","19","20","21","22","23","24","25",
         "26","27","28","29","30","31","32","33","34","35","36","37","38",
         "39","40","41","42","43","44","45","46","47","48","49","50","51",
         "52","53","54","55","56","57","58","59"};
-    private DateFormat tf = new SimpleDateFormat("HH:mm");
+    private final DateFormat tf = new SimpleDateFormat("HH:mm");
     
     
     
@@ -79,7 +74,7 @@ public class AddEventWindow extends JFrame {
         c.fill = GridBagConstraints.HORIZONTAL;
         
         // Event Name option
-        lbEventName = new JLabel("Event name");
+        JLabel lbEventName = new JLabel("Event name");
         c.gridx = 0;
         c.gridy = 0;
         c.gridwidth = 1;
@@ -93,7 +88,7 @@ public class AddEventWindow extends JFrame {
         paneAdd.add(tfEventName, c);
         
         // Event Info option
-        lbEventInfo = new JLabel("Event Info");
+        JLabel lbEventInfo = new JLabel("Event Info");
         c.gridx = 0;
         c.gridy = 1;
         c.gridwidth = 1;
@@ -107,19 +102,19 @@ public class AddEventWindow extends JFrame {
         paneAdd.add(tfEventInfo, c);
         
         // event Category
-        lbEventCat = new JLabel("Event Category ");
+        JLabel lbEventCat = new JLabel("Event Category ");
         c.gridx = 0;
         c.gridy = 2;
         c.gridwidth = 1;
         paneAdd.add(lbEventCat, c);
         
         
-        combobox = new JComboBox(comboboxmodel);
+        combobox = new JComboBox<>(comboboxmodel);
         // Get all the saved Categories and add it to the combobox
-        ArrayList<CategoryObject> tempList = model.getXMLHandler().getCategories();
-        for(int i = 0; i<tempList.size();i++) {
-            if(!tempList.get(i).getName().equals("Standard")){
-                combobox.addItem(tempList.get(i).getName());
+        List<CategoryObject> tempList = model.getXMLHandler().getCategories();
+        for (CategoryObject aTempList : tempList) {
+            if (!aTempList.getName().equals("Standard")) {
+                combobox.addItem(aTempList.getName());
             }
         }
         c.gridx = 1;
@@ -128,38 +123,38 @@ public class AddEventWindow extends JFrame {
         paneAdd.add(combobox, c);
         
         // Start time label
-        lbSTime = new JLabel("Event Start Time");
+        JLabel lbSTime = new JLabel("Event Start Time");
         c.gridx = 0;
         c.gridy = 3;
         c.gridwidth = 1;
         paneAdd.add(lbSTime, c);
         
         //Start time comboboxes
-        comboboxSH = new JComboBox(hours);
+        comboboxSH = new JComboBox<>(hours);
         c.gridx = 1;
         c.gridy = 3;
         paneAdd.add(comboboxSH,c);
         
-        comboboxSM = new JComboBox(minutes);
+        comboboxSM = new JComboBox<>(minutes);
         c.gridx = 2;
         c.gridy = 3;
         paneAdd.add(comboboxSM,c);
         
         // End time label
-        lbETime = new JLabel("Event End Time");
+        JLabel lbETime = new JLabel("Event End Time");
         c.gridx = 0;
         c.gridy = 4;
         c.gridwidth = 1;
         paneAdd.add(lbETime, c);
         
         //End time comboboxes
-        comboboxEH = new JComboBox(hours);
+        comboboxEH = new JComboBox<>(hours);
         //comboboxSH.setSelectedIndex(cal.get(Calendar.HOUR_OF_DAY));
         c.gridx = 1;
         c.gridy = 4;
         paneAdd.add(comboboxEH,c);
         
-        comboboxEM = new JComboBox(minutes);
+        comboboxEM = new JComboBox<>(minutes);
         //comboboxSM.setSelectedIndex(cal.get(Calendar.MINUTE));
         c.gridx = 2;
         c.gridy = 4;
@@ -229,32 +224,29 @@ public class AddEventWindow extends JFrame {
      * Returns the start time of the task.
      * @return          Time from combo boxes.
      */
-    public Date getEventStartTime() {
-        String H = hours[comboboxSH.getSelectedIndex()];
-        String M = minutes[comboboxSM.getSelectedIndex()];
-        String sTime = (H+":"+M);
-        try { 
-            eTime = tf.parse(sTime);
-        } 
-        catch(Exception e) {
-        }
-        return eTime;
+    public Date getEventStartTime() throws ParseException {
+        return getEventTime(comboboxSH, comboboxSM);
     }
     
     /**
      * Returns the end time of the task.
      * @return          Time from combo boxes.
      */
-    public Date getEventEndTime() {
-        String H = hours[comboboxEH.getSelectedIndex()];
-        String M = minutes[comboboxEM.getSelectedIndex()];
+    public Date getEventEndTime() throws ParseException {
+        return getEventTime(comboboxEH, comboboxEM);
+    }
+
+    private Date getEventTime(JComboBox hour, JComboBox minute) throws ParseException {
+        String H = hours[hour.getSelectedIndex()];
+        String M = minutes[minute.getSelectedIndex()];
         String sTime = (H+":"+M);
-        try { 
-            eTime = tf.parse(sTime);
-        } 
-        catch(Exception e) {
+        try {
+            return tf.parse(sTime);
         }
-        return eTime;
+        catch(Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
     
 }

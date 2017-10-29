@@ -16,14 +16,13 @@ import java.awt.image.BufferedImage;
  * @author Kenny
  */
 
-public class FadeButton extends JButton implements ActionListener
+class FadeButton extends JButton implements ActionListener
 {
 
-    float alpha = 1.0f;
-    Timer timer;
-    int animationDuration = 2000;
-    long animationStartTime;
-    BufferedImage buttonImage = null;
+    private float alpha = 1.0f;
+    private final Timer timer;
+    private long animationStartTime;
+    private BufferedImage buttonImage = null;
     
     
     /**
@@ -94,7 +93,8 @@ public class FadeButton extends JButton implements ActionListener
             else {
             long currentTime = System.nanoTime() / 1000000;
             long totalTime = currentTime - animationStartTime;
-            if (totalTime > animationDuration) 
+            int animationDuration = 2000;
+            if (totalTime > animationDuration)
             {
                 animationStartTime = currentTime;
         }

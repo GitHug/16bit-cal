@@ -14,18 +14,18 @@ import java.util.List;
  */
 public class WeekDay {
     private String weekDay = null;
-    private String[] weekDays = {
-        "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
-    };
-    private List lst = Arrays.asList(weekDays);
-    
+
     /**
      * Constructor to create a week day.
      * If something else other than a week day, that is Monday, Tuesday etc. is input,
      * then a NotAWeekDayException will be thrown. 
-     * @param weekDay 
+     * @param weekDay name of weekday
      */
     public WeekDay(String weekDay) {
+        String[] weekDays = {
+                "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
+        };
+        List lst = Arrays.asList(weekDays);
         if(lst.contains(weekDay)) {
             this.weekDay = weekDay;
             }
@@ -34,7 +34,7 @@ public class WeekDay {
                     throw new NotAWeekDayException(weekDay + " is not a valid week day");
                 } 
                 catch (NotAWeekDayException ex) {
-                    System.err.println(ex);
+                    ex.printStackTrace();
                 }
             }
     }
@@ -54,17 +54,11 @@ public class WeekDay {
     private class NotAWeekDayException extends Exception{
             
             /**
-             * Empty constructor to be able to cast the exception without a message.
-             */
-            public NotAWeekDayException() {   
-            }
-            
-            /**
              * Constructor that takes a description. 
              * The description can give the user more information on what went wrong
              * @param description a message to be shown
              */
-            public NotAWeekDayException(String description) {
+            NotAWeekDayException(String description) {
                 super(description);
             }
         }
