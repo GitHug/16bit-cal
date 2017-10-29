@@ -7,6 +7,8 @@ The program is created in Java with the user interface components created using 
 
 This project uses JDom, an open source Java-based document object model for XML. It allows for easy to use storing and retrieval of data in XML. Credit goes to the people at www.jdom.org or here at https://github.com/hunterhacker/jdom/ .
 
+The code was written back in 2009 and, especially the code I have written myself, is amateurish at best. It's nice to look back at it though and recognize that I have come very far since then in both my skills as a programmer but also how to structure a project.
+
 Features available:
 -----------
 
@@ -29,6 +31,9 @@ Features available:
 Installation:
 -----------
 
-Get the build.xml file and run $ant. That's about it. The resulting jar-file ends up in /dist/lib/
+```
+mvn install
+java -jar target/16bit-cal-1.0-jar-with-dependencies.jar
+```
 
 Enjoy!
